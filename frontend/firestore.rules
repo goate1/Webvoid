@@ -1,9 +1,72 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read and write access to reviews
+
+    // Public read-only collections (site content)
+    match /products/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /teams/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /newsArticles/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /socialLinks/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /matches/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /events/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /ambassadors/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /placements/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Public read + write (user-submitted content)
     match /reviews/{reviewId} {
       allow read, write: if true;
+    }
+
+    match /contactMessages/{id} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    match /support-tickets/{id} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Orders: users can create + read their own
+    match /orders/{id} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
+    // Admin-only collections
+    match /admin_logs/{id} {
+      allow read, write: if request.auth != null;
     }
   }
 }

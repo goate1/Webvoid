@@ -6,13 +6,12 @@ import { getStorage, type FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDqaPyYEv7PE34Njb1w8VFXdeU8UulCXmw",
-  authDomain: "transcend-application-bot.firebaseapp.com",
-  databaseURL: "https://transcend-application-bot-default-rtdb.firebaseio.com",
-  projectId: "transcend-application-bot",
-  storageBucket: "transcend-application-bot.firebasestorage.app",
-  messagingSenderId: "748353091728",
-  appId: "1:748353091728:web:af973e8bec34c81f2e8015"
+  apiKey: "AIzaSyCHpiRhztvb7TE9o-4RRy5Q6Lv_XO78dbs",
+  authDomain: "void-esports-website.firebaseapp.com",
+  projectId: "void-esports-website",
+  storageBucket: "void-esports-website.firebasestorage.app",
+  messagingSenderId: "862107622581",
+  appId: "1:862107622581:web:bbcb31f17fd539bd5d32fc"
 };
 
 // Prevent direct access to firebaseConfig from window object

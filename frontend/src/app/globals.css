@@ -2,39 +2,191 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* ── Design tokens ─────────────────────────────────────────── */
 :root {
-  --void-purple: #FFFFFF;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --accent: #a855f7;
+  --border: #e5e5e5;
+  --muted: #6b6b6b;
+  --off-white: #f5f5f5;
+
+  /* Legacy tokens kept for backward compatibility */
+  --void-purple: #ffffff;
   --void-dark: #1a0a2e;
   --void-dark-alt: #2a1a3a;
-  --void-light: #F5F5F5;
-  --purple-primary: #740FA8;
-  --purple-secondary: #9E47B2;
-  --purple-accent: rgba(116, 15, 168, 0.1);
+  --void-light: #f5f5f5;
+  --purple-primary: #a855f7;
+  --purple-secondary: #9333ea;
+  --purple-accent: rgba(168, 85, 247, 0.1);
 }
 
+/* ── Base ───────────────────────────────────────────────────── */
 body {
-  background: linear-gradient(135deg, #1a0a2e 0%, #2a1a3a 50%, #740FA8 100%);
-  background-attachment: fixed;
-  color: var(--void-light);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #0a0a0a;
+  font-family: var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
-  padding-top: 4rem; /* Add padding for fixed navbar */
+  padding-top: 4rem; /* offset for fixed navbar */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
-/* Page Transition Animations */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* ── Layout helpers ─────────────────────────────────────────── */
+@layer components {
+  .void-container {
+    width: 100%;
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .void-container {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────── */
+  .void-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #0a0a0a;
+    color: #ffffff;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: background 0.2s ease, color 0.2s ease;
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+    min-height: 44px;
+  }
+
+  .void-button:hover {
+    background: #a855f7;
+    color: #ffffff;
+  }
+
+  .void-button-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+    min-height: 44px;
+  }
+
+  .void-button-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ── Cards ────────────────────────────────────────────────── */
+  .void-card {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .void-card:hover {
+    border-color: #a855f7;
+    background: #fafafa;
+  }
+
+  /* ── Editorial inputs ─────────────────────────────────────── */
+  .void-input {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    color: #0a0a0a;
+    transition: border-color 0.15s ease;
+    outline: none;
+  }
+
+  .void-input:focus {
+    border-color: #0a0a0a;
+  }
+
+  .void-input::placeholder {
+    color: #b0b0b0;
+  }
+
+  .void-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #0a0a0a;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+    font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  }
+
+  .shop-container {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+}
+
+/* ── Marquee ────────────────────────────────────────────────── */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+  white-space: nowrap;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* ── Page transition animations ────────────────────────────── */
 .page-transition {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1a0a2e 0%, #2a1a3a 30%, #740FA8 70%, #1a0a2e 100%);
+  background: #0a0a0a;
   z-index: 9999;
   transform: translateY(100%);
-  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .page-transition.active {
@@ -45,11 +197,11 @@ body {
   transform: translateY(-100%);
 }
 
-/* Page Content Animations */
+/* ── Content entrance animations ───────────────────────────── */
 .page-content {
   opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform: translateY(16px);
+  animation: fadeInUp 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @keyframes fadeInUp {
@@ -59,19 +211,18 @@ body {
   }
 }
 
-/* Staggered Animation for Cards */
 .stagger-animation {
   opacity: 0;
-  transform: translateY(30px);
-  animation: staggerFadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform: translateY(24px);
+  animation: staggerFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
-.stagger-animation:nth-child(1) { animation-delay: 0.1s; }
-.stagger-animation:nth-child(2) { animation-delay: 0.2s; }
-.stagger-animation:nth-child(3) { animation-delay: 0.3s; }
-.stagger-animation:nth-child(4) { animation-delay: 0.4s; }
-.stagger-animation:nth-child(5) { animation-delay: 0.5s; }
-.stagger-animation:nth-child(6) { animation-delay: 0.6s; }
+.stagger-animation:nth-child(1) { animation-delay: 0.05s; }
+.stagger-animation:nth-child(2) { animation-delay: 0.1s; }
+.stagger-animation:nth-child(3) { animation-delay: 0.15s; }
+.stagger-animation:nth-child(4) { animation-delay: 0.2s; }
+.stagger-animation:nth-child(5) { animation-delay: 0.25s; }
+.stagger-animation:nth-child(6) { animation-delay: 0.3s; }
 
 @keyframes staggerFadeIn {
   to {
@@ -80,7 +231,38 @@ body {
   }
 }
 
-/* Parallax Effects */
+/* ── Hero animations ────────────────────────────────────────── */
+.hero-title {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: heroTitleIn 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+.hero-subtitle {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: heroSubtitleIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+}
+
+.hero-buttons {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroButtonsIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.65s forwards;
+}
+
+@keyframes heroTitleIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroSubtitleIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroButtonsIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Parallax ───────────────────────────────────────────────── */
 .parallax-container {
   position: relative;
   overflow: hidden;
@@ -91,197 +273,38 @@ body {
   will-change: transform;
 }
 
-/* Hero Section Animations */
-.hero-title {
-  opacity: 0;
-  transform: translateY(50px);
-  animation: heroTitleIn 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
-}
-
-.hero-subtitle {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: heroSubtitleIn 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
-}
-
-.hero-buttons {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: heroButtonsIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
-}
-
-@keyframes heroTitleIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes heroSubtitleIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes heroButtonsIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Enhanced Card Animations */
-.void-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(116, 15, 168, 0.08) 100%);
-  backdrop-filter: saturate(140%) blur(8px);
-  -webkit-backdrop-filter: saturate(140%) blur(8px);
-  border: 1px solid rgba(116, 15, 168, 0.2);
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-  box-shadow: 0 10px 25px -10px rgba(116, 15, 168, 0.3);
-  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
-  transform: translateY(0);
-  position: relative;
-  overflow: hidden;
-}
-
-.void-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(116, 15, 168, 0.3), transparent);
-  transition: left 0.6s;
-}
-
-.void-card:hover::before {
-  left: 100%;
-}
-
-.void-card:hover {
-  transform: translateY(-6px) scale(1.015);
-  border-color: rgba(116, 15, 168, 0.4);
-  box-shadow: 0 25px 45px -12px rgba(116, 15, 168, 0.4);
-}
-
-/* Player Card Specific Animations */
+/* ── Player card (kept for teams pages) ─────────────────────── */
 .player-card {
-  background: linear-gradient(135deg, #2a1a3a 0%, rgba(116, 15, 168, 0.2) 100%);
-  border: 1px solid rgba(116, 15, 168, 0.2);
-  border-radius: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
   padding: 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(116, 15, 168, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.5s;
-  transform: perspective(1000px) rotateX(0deg);
+  transition: border-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
 .player-card:hover {
-  transform: perspective(1000px) rotateX(5deg) translateY(-10px);
-  box-shadow: 0 25px 50px rgba(116, 15, 168, 0.4);
+  border-color: #a855f7;
 }
 
-.player-card-image {
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.player-card:hover .player-card-image {
-  transform: scale(1.1) translateY(-5px);
-}
-
-@layer components {
-  .void-container {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  @media (min-width: 640px) {
-    .void-container {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-  }
-  
-  @media (min-width: 1024px) {
-    .void-container {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-  
-  .void-button {
-    background-color: #FFFFFF;
-    color: #000000;
-    font-weight: 700;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    transition: all 0.3s;
-  }
-  
-  .void-button:hover {
-    background-color: #FFFFFF;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    transition: all 0.3s;
-  }
-  
-  .void-card {
-    background: linear-gradient(135deg, #2a1a3a 0%, rgba(116, 15, 168, 0.2) 100%);
-    border: 1px solid rgba(116, 15, 168, 0.2);
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    box-shadow: 0 10px 15px -3px rgba(116, 15, 168, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s;
-  }
-  
-  .void-card:hover {
-    box-shadow: 0 20px 25px -5px rgba(116, 15, 168, 0.3), 0 10px 10px -5px rgba(116, 15, 168, 0.1);
-  }
-  
-  .shop-container {
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
-    padding-right: 0.5rem;
-  }
-}
-
-.gradient-text {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(to right, #FFFFFF, #dedede);
-}
-
-/* Loading state styles */
+/* ── Loading ────────────────────────────────────────────────── */
 .loading-fade-in {
-  animation: loading-fade-in 0.5s ease-out;
+  animation: loading-fade-in 0.4s ease-out;
 }
 
 @keyframes loading-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Loading spinner */
 .loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top: 3px solid #ffffff;
+  width: 36px;
+  height: 36px;
+  border: 2px solid #e5e5e5;
+  border-top: 2px solid #0a0a0a;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
@@ -289,34 +312,24 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Error state styles */
-.error-state {
-  background: linear-gradient(135deg, #2a1a3a 0%, #1a0a2e 100%);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Custom Scrollbar */
+/* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a0a2e;
+  background: #f5f5f5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FFFFFF;
+  background: #d4d4d4;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #dedede;
+  background: #a855f7;
 }
 
-/* Hide scrollbar for mobile horizontal scroll */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -326,129 +339,48 @@ body {
   display: none;
 }
 
-/* Firefox scrollbar rules removed to satisfy linter compatibility checks */
-
-/* Admin Panel Custom Scrollbar */
+/* ── Admin panel scrollbar ──────────────────────────────────── */
 .admin-panel ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 .admin-panel ::-webkit-scrollbar-track {
-  background: #2a1a3a;
+  background: #f5f5f5;
 }
 
 .admin-panel ::-webkit-scrollbar-thumb {
-  background: #FFFFFF;
-  border-radius: 4px;
+  background: #d4d4d4;
+  border-radius: 3px;
 }
 
 .admin-panel ::-webkit-scrollbar-thumb:hover {
-  background: #dedede;
+  background: #a855f7;
 }
 
-/* Mobile-specific improvements */
-@media (max-width: 640px) {
-  .void-card {
-    padding: 1rem;
-  }
-  
-  .void-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-  }
-  
-  /* Improve touch targets */
-  button, a {
-    min-height: 44px;
-  }
-  
-  /* Better text readability on mobile */
-  body {
-    font-size: 16px;
-    line-height: 1.5;
-    padding-top: 4rem;
-  }
-  
-  /* Prevent horizontal scroll */
-  html, body {
-    overflow-x: hidden;
-    max-width: 100vw;
-  }
-  
-  /* Better carousel spacing on mobile */
-  .carousel-container {
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: -1rem;
-    margin-right: -1rem;
-  }
-  
-  .carousel-container::before,
-  .carousel-container::after {
-    width: 40px;
-  }
-  
-  .carousel-container::before {
-    background: linear-gradient(to right, #2a1a3a, transparent);
-  }
-  
-  .carousel-container::after {
-    background: linear-gradient(to left, #2a1a3a, transparent);
-  }
-  
-  /* Improve mobile menu */
-  .mobile-menu-open {
-    overflow: hidden !important;
-  }
-  
-  /* Better spacing for mobile */
-  .void-container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-  
-  /* Optimize animations for mobile */
-  .void-card:hover {
-    transform: translateY(-3px) scale(1.01);
-  }
-  
-  /* Better hero section on mobile */
-  section {
-    scroll-margin-top: 4rem;
-  }
+/* ── Text utilities ─────────────────────────────────────────── */
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, #0a0a0a 0%, #a855f7 100%);
 }
 
-/* Tablet improvements */
-@media (min-width: 641px) and (max-width: 1024px) {
-  .void-container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-  
-  .void-card {
-    padding: 1.25rem;
-  }
-  
-  /* Better carousel on tablets */
-  .carousel-container::before,
-  .carousel-container::after {
-    width: 80px;
-  }
+.text-purple-gradient {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
-/* Landscape mobile improvements */
-@media (max-width: 896px) and (orientation: landscape) {
-  body {
-    padding-top: 3.5rem;
-  }
-  
-  /* Reduce hero height in landscape */
-  section.relative.h-\[70vh\] {
-    height: 90vh !important;
-  }
+.bg-purple-gradient {
+  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
 }
 
-/* Line clamp utilities for mobile */
+.bg-purple-gradient-subtle {
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+}
+
+/* ── Line clamp utilities ───────────────────────────────────── */
 .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
@@ -473,7 +405,99 @@ body {
   line-clamp: 3;
 }
 
-/* Reduced motion support */
+/* ── Carousel gradients (legacy, kept for compatibility) ─────── */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-container::before,
+.carousel-container::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 80px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.carousel-container::before {
+  left: 0;
+  background: linear-gradient(to right, #ffffff, transparent);
+}
+
+.carousel-container::after {
+  right: 0;
+  background: linear-gradient(to left, #ffffff, transparent);
+}
+
+/* ── Mobile menu ────────────────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-slideDown {
+  animation: slideDown 0.18s ease-out forwards;
+}
+
+/* ── Easter egg animation (teams page) ─────────────────────── */
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: scale(0.85); }
+  20%  { opacity: 1; transform: scale(1); }
+  80%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.85); }
+}
+
+/* ── Error state ────────────────────────────────────────────── */
+.error-state {
+  background: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Image defaults ─────────────────────────────────────────── */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.relative img {
+  object-fit: cover;
+}
+
+/* ── Touch highlight ────────────────────────────────────────── */
+* {
+  -webkit-tap-highlight-color: rgba(168, 85, 247, 0.15);
+}
+
+/* ── Smooth momentum scroll ─────────────────────────────────── */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── iOS Safari bottom bar ──────────────────────────────────── */
+@supports (-webkit-touch-callout: none) {
+  body {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -485,161 +509,29 @@ body {
   }
 }
 
-/* Image optimization for mobile */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Prevent layout shift */
-.relative img {
-  object-fit: cover;
-}
-
-/* Better tap highlight */
-* {
-  -webkit-tap-highlight-color: rgba(116, 15, 168, 0.2);
-}
-
-/* Smooth momentum scrolling on iOS */
-.overflow-y-auto,
-.overflow-x-auto {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Fix for iOS Safari bottom bar */
-@supports (-webkit-touch-callout: none) {
+/* ── Responsive tweaks ──────────────────────────────────────── */
+@media (max-width: 640px) {
   body {
-    min-height: -webkit-fill-available;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .void-card {
+    padding: 1rem;
+  }
+
+  button,
+  a {
+    min-height: 44px;
+  }
+
+  section {
+    scroll-margin-top: 4rem;
   }
 }
 
-/* Add missing keyframes for fadeInOut animation used in teams page easter egg */
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: scale(0.8); }
-  20% { opacity: 1; transform: scale(1); }
-  80% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.8); }
-}
-
-/* Purple Gradient Utilities */
-.bg-purple-gradient {
-  background: linear-gradient(135deg, #740FA8 0%, #9E47B2 100%);
-}
-
-.bg-purple-gradient-subtle {
-  background: linear-gradient(135deg, rgba(116, 15, 168, 0.1) 0%, rgba(158, 71, 178, 0.1) 100%);
-}
-
-.text-purple-gradient {
-  background: linear-gradient(135deg, #740FA8 0%, #9E47B2 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-.border-purple-gradient {
-  border-image: linear-gradient(135deg, #740FA8 0%, #9E47B2 100%) 1;
-}
-
-/* Purple accent elements */
-.purple-accent::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(116, 15, 168, 0.05) 0%, rgba(158, 71, 178, 0.05) 100%);
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* Enhanced button with purple accent */
-.void-button-purple {
-  background: linear-gradient(135deg, #FFFFFF 0%, #f3e8ff 100%);
-  color: #000000;
-  font-weight: 700;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(116, 15, 168, 0.2);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.void-button-purple:hover {
-  background: linear-gradient(135deg, #FFFFFF 0%, #e9d5ff 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(116, 15, 168, 0.3);
-}
-
-.void-button-purple::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(116, 15, 168, 0.1);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.void-button-purple:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-/* 
-Continuous Carousel Styles */
-.carousel-container {
-  position: relative;
-  overflow: hidden;
-  -webkit-overflow-scrolling: touch;
-}
-
-.carousel-container::before,
-.carousel-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100px;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.carousel-container::before {
-  left: 0;
-  background: linear-gradient(to right, #1A1A1A, transparent);
-}
-
-.carousel-container::after {
-  right: 0;
-  background: linear-gradient(to left, #1A1A1A, transparent);
-}
-
-/* Smooth scrolling for carousels */
-.carousel-container > div {
-  will-change: transform;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-}
-
-/* Mobile Menu Slide-In Animation */
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
+@media (max-width: 896px) and (orientation: landscape) {
+  body {
+    padding-top: 3.5rem;
   }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.animate-slideInRight {
-  animation: slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     console.log('Starting order recovery process...');
 
-    // Get all successful payment intents from last 30 days
+    // Get all payment intents from last 30 days — status check happens per-item below
     const thirtyDaysAgo = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
 
     const paymentIntents = await stripeInstance.paymentIntents.list({
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       limit: 100,
     });
 
-    console.log(`Found ${paymentIntents.data.length} successful payment intents`);
+    console.log(`Found ${paymentIntents.data.length} payment intents (will filter for succeeded only)`);
 
     const results = {
       recovered: [] as any[],
@@ -46,6 +46,11 @@ export async function POST(req: NextRequest) {
       try {
         const metadata = paymentIntent.metadata;
         const firestoreOrderId = metadata.orderId;
+
+        if (paymentIntent.status !== 'succeeded') {
+          results.skipped++;
+          continue;
+        }
 
         if (!firestoreOrderId) {
           console.log(`Skipping payment ${paymentIntent.id} - no orderId in metadata`);

@@ -4,13 +4,15 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { productService } from '@/lib/productService';
 import { uploadService } from '@/lib/uploadService';
-import { 
-  PlusIcon, 
-  PencilIcon, 
+import {
+  PlusIcon,
+  PencilIcon,
   TrashIcon,
   MagnifyingGlassIcon,
-  CloudArrowUpIcon
+  CloudArrowUpIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
+import GoogleDrivePicker from '@/components/GoogleDrivePicker';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -81,6 +83,11 @@ export default function ProductsPage() {
   const imageFileRef = useRef<HTMLInputElement>(null);
   const hoverImageFileRef = useRef<HTMLInputElement>(null);
   const additionalImageFileRef = useRef<HTMLInputElement>(null);
+
+  // Drag-over state for each drop zone
+  const [imageDragging, setImageDragging] = useState(false);
+  const [hoverDragging, setHoverDragging] = useState(false);
+  const [additionalDragging, setAdditionalDragging] = useState(false);
 
   const loadProducts = async () => {
     try {
@@ -470,10 +477,10 @@ export default function ProductsPage() {
                 />
               </div>
               
-              {/* File Upload for Product Image */}
+              {/* File Upload / Drive for Product Image */}
               <div className="md:col-span-2">
                 <label className="block text-sm text-gray-400 mb-1">Or Upload Product Image</label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <input
                     type="file"
                     ref={imageFileRef}
@@ -482,15 +489,41 @@ export default function ProductsPage() {
                     className="hidden"
                     id="product-image-upload"
                   />
-                  <label 
+                  <label
                     htmlFor="product-image-upload"
                     className="flex items-center gap-2 bg-[#2A2A2A] hover:bg-[#3A3A3A] text-white px-3 py-2 rounded cursor-pointer transition-colors"
                   >
                     <CloudArrowUpIcon className="w-5 h-5" />
                     <span>Choose File</span>
                   </label>
+                  <GoogleDrivePicker
+                    label="Pick from Drive"
+                    onSelect={(url) => setProductForm(p => ({ ...p, image: url }))}
+                  />
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setImageDragging(true); }}
+                    onDragLeave={() => setImageDragging(false)}
+                    onDrop={async (e) => {
+                      e.preventDefault();
+                      setImageDragging(false);
+                      const file = e.dataTransfer.files[0];
+                      if (!file || !file.type.startsWith('image/')) return;
+                      try {
+                        const url = await uploadService.uploadProductImage(file);
+                        setProductForm(p => ({ ...p, image: url }));
+                      } catch (err) {
+                        alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+                      }
+                    }}
+                    className={`flex items-center gap-2 border-2 border-dashed rounded px-3 py-2 text-sm cursor-pointer transition-colors ${
+                      imageDragging ? 'border-white bg-white/10 text-white' : 'border-[#3A3A3A] text-gray-500 hover:border-gray-400'
+                    }`}
+                  >
+                    <CloudArrowUpIcon className="w-4 h-4" />
+                    Drop here
+                  </div>
                   <span className="text-gray-400 text-sm">
-                    {imageFileRef.current?.files?.[0]?.name || 'No file chosen'}
+                    {imageFileRef.current?.files?.[0]?.name || ''}
                   </span>
                 </div>
               </div>
@@ -530,10 +563,10 @@ export default function ProductsPage() {
                 />
               </div>
               
-              {/* File Upload for Hover Image */}
+              {/* File Upload / Drive for Hover Image */}
               <div className="md:col-span-2">
                 <label className="block text-sm text-gray-400 mb-1">Or Upload Hover Image</label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <input
                     type="file"
                     ref={hoverImageFileRef}
@@ -542,15 +575,41 @@ export default function ProductsPage() {
                     className="hidden"
                     id="hover-image-upload"
                   />
-                  <label 
+                  <label
                     htmlFor="hover-image-upload"
                     className="flex items-center gap-2 bg-[#2A2A2A] hover:bg-[#3A3A3A] text-white px-3 py-2 rounded cursor-pointer transition-colors"
                   >
                     <CloudArrowUpIcon className="w-5 h-5" />
                     <span>Choose Hover Image</span>
                   </label>
+                  <GoogleDrivePicker
+                    label="Pick from Drive"
+                    onSelect={(url) => setProductForm(p => ({ ...p, hoverImage: url }))}
+                  />
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setHoverDragging(true); }}
+                    onDragLeave={() => setHoverDragging(false)}
+                    onDrop={async (e) => {
+                      e.preventDefault();
+                      setHoverDragging(false);
+                      const file = e.dataTransfer.files[0];
+                      if (!file || !file.type.startsWith('image/')) return;
+                      try {
+                        const url = await uploadService.uploadProductImage(file);
+                        setProductForm(p => ({ ...p, hoverImage: url }));
+                      } catch (err) {
+                        alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+                      }
+                    }}
+                    className={`flex items-center gap-2 border-2 border-dashed rounded px-3 py-2 text-sm cursor-pointer transition-colors ${
+                      hoverDragging ? 'border-white bg-white/10 text-white' : 'border-[#3A3A3A] text-gray-500 hover:border-gray-400'
+                    }`}
+                  >
+                    <CloudArrowUpIcon className="w-4 h-4" />
+                    Drop here
+                  </div>
                   <span className="text-gray-400 text-sm">
-                    {hoverImageFileRef.current?.files?.[0]?.name || 'No file chosen'}
+                    {hoverImageFileRef.current?.files?.[0]?.name || ''}
                   </span>
                 </div>
               </div>
@@ -648,6 +707,32 @@ export default function ProductsPage() {
                       <CloudArrowUpIcon className="w-4 h-4" />
                       Upload
                     </label>
+                    <GoogleDrivePicker
+                      label="Drive"
+                      onSelect={(url) => addImage(url)}
+                    />
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setAdditionalDragging(true); }}
+                      onDragLeave={() => setAdditionalDragging(false)}
+                      onDrop={async (e) => {
+                        e.preventDefault();
+                        setAdditionalDragging(false);
+                        const file = e.dataTransfer.files[0];
+                        if (!file || !file.type.startsWith('image/')) return;
+                        try {
+                          const url = await uploadService.uploadProductImage(file);
+                          addImage(url);
+                        } catch (err) {
+                          alert(`Upload failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+                        }
+                      }}
+                      className={`flex items-center gap-2 border-2 border-dashed rounded px-3 py-2 text-sm cursor-pointer transition-colors ${
+                        additionalDragging ? 'border-white bg-white/10 text-white' : 'border-[#3A3A3A] text-gray-500 hover:border-gray-400'
+                      }`}
+                    >
+                      <CloudArrowUpIcon className="w-4 h-4" />
+                      Drop here
+                    </div>
                   </div>
                   <p className="text-xs text-gray-500">
                     Press Enter in the URL field to add an image, or use the upload button. Images will be displayed in the product detail page.
@@ -787,6 +872,151 @@ export default function ProductsPage() {
           </div>
         </div>
       </div>
+
+      {/* Customization Modal */}
+      {selectedProductForCustomization && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-[#0F0F0F] border border-[#2A2A2A] rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-[#2A2A2A]">
+              <h3 className="text-xl font-bold text-white">
+                Configure: {selectedProductForCustomization.name}
+              </h3>
+              <button
+                onClick={() => setSelectedProductForCustomization(null)}
+                className="text-gray-400 hover:text-white p-1 rounded"
+              >
+                <XMarkIcon className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Sizes */}
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  <input
+                    type="checkbox"
+                    id="hasSizes"
+                    checked={customizationForm.hasSizes}
+                    onChange={e => setCustomizationForm(prev => ({ ...prev, hasSizes: e.target.checked }))}
+                    className="w-4 h-4 accent-purple-500"
+                  />
+                  <label htmlFor="hasSizes" className="text-white font-semibold cursor-pointer">
+                    Enable Size Selection
+                  </label>
+                </div>
+
+                {customizationForm.hasSizes && (
+                  <div className="space-y-2 ml-7">
+                    <div className="grid grid-cols-12 gap-2 text-xs text-gray-500 px-1 mb-1">
+                      <span className="col-span-4">Size Name</span>
+                      <span className="col-span-3">Price +/-</span>
+                      <span className="col-span-3">Available</span>
+                      <span className="col-span-2" />
+                    </div>
+                    {customizationForm.sizes.map((size, idx) => (
+                      <div key={size.id} className="grid grid-cols-12 gap-2 items-center bg-[#1A1A1A] p-2 rounded-lg">
+                        <input
+                          type="text"
+                          value={size.name}
+                          onChange={e => {
+                            const updated = [...customizationForm.sizes];
+                            updated[idx] = { ...updated[idx], name: e.target.value };
+                            setCustomizationForm(prev => ({ ...prev, sizes: updated }));
+                          }}
+                          placeholder="e.g. S, M, XL"
+                          className="col-span-4 bg-[#0F0F0F] border border-[#2A2A2A] rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                        />
+                        <div className="col-span-3 flex items-center gap-1">
+                          <span className="text-gray-500 text-sm">$</span>
+                          <input
+                            type="number"
+                            step="0.01"
+                            value={size.priceModifier || ''}
+                            onChange={e => {
+                              const updated = [...customizationForm.sizes];
+                              updated[idx] = { ...updated[idx], priceModifier: parseFloat(e.target.value) || 0 };
+                              setCustomizationForm(prev => ({ ...prev, sizes: updated }));
+                            }}
+                            placeholder="0.00"
+                            className="w-full bg-[#0F0F0F] border border-[#2A2A2A] rounded px-2 py-1.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-purple-500"
+                          />
+                        </div>
+                        <label className="col-span-3 flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={size.available}
+                            onChange={e => {
+                              const updated = [...customizationForm.sizes];
+                              updated[idx] = { ...updated[idx], available: e.target.checked };
+                              setCustomizationForm(prev => ({ ...prev, sizes: updated }));
+                            }}
+                            className="w-4 h-4 accent-purple-500"
+                          />
+                          <span className="text-sm text-gray-300">In stock</span>
+                        </label>
+                        <button
+                          onClick={() => setCustomizationForm(prev => ({
+                            ...prev,
+                            sizes: prev.sizes.filter((_, i) => i !== idx)
+                          }))}
+                          className="col-span-2 text-red-400 hover:text-red-300 p-1 flex justify-center"
+                        >
+                          <TrashIcon className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => setCustomizationForm(prev => ({
+                        ...prev,
+                        sizes: [...prev.sizes, { id: Date.now().toString(), name: '', priceModifier: 0, available: true }]
+                      }))}
+                      className="flex items-center gap-2 text-purple-400 hover:text-purple-300 text-sm font-medium mt-2"
+                    >
+                      <PlusIcon className="w-4 h-4" />
+                      Add Size
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Jersey / Custom Fields */}
+              <div className="border-t border-[#2A2A2A] pt-4">
+                <div className="flex items-center gap-3 mb-1">
+                  <input
+                    type="checkbox"
+                    id="hasCustomFields"
+                    checked={customizationForm.hasCustomFields}
+                    onChange={e => setCustomizationForm(prev => ({ ...prev, hasCustomFields: e.target.checked }))}
+                    className="w-4 h-4 accent-purple-500"
+                  />
+                  <label htmlFor="hasCustomFields" className="text-white font-semibold cursor-pointer">
+                    Enable Jersey Custom Fields
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 ml-7">
+                  Adds Name on Back and Country Flag text inputs at checkout (auto-applied to jersey/kit products).
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 pt-2 border-t border-[#2A2A2A]">
+                <button
+                  onClick={handleUpdateProductCustomization}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setSelectedProductForCustomization(null)}
+                  className="bg-[#2A2A2A] hover:bg-[#3A3A3A] text-white font-medium py-2 px-4 rounded-lg transition-all duration-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (

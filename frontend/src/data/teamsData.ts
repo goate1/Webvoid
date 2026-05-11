@@ -89,13 +89,12 @@ export const fallbackTeams: DisplayTeam[] = [
         description: 'Void Esports Ownership Team',
         players: [
             {
-                name: 'Frankenstein',
+                name: 'Frank',
                 role: 'Founder',
                 image: '/teams/players/frank.png',
                 game: 'Management',
-                description: 'The visionary behind Void Esports. Frankenstein oversees all operations and strategic direction of the organization.',
+                description: 'The visionary behind Void Esports. Frank oversees all operations and strategic direction of the organization.',
                 stats: [
-                    { label: 'Founded', value: '2020' },
                     { label: 'Role', value: 'Founder' }
                 ],
                 achievements: ['Founder', 'Team Management', 'Business Development'],
@@ -105,61 +104,42 @@ export const fallbackTeams: DisplayTeam[] = [
                 }
             },
             {
-                name: 'Gruun',
-                role: 'Founder',
-                image: '/teams/players/gruun.png',
-                game: 'Management',
-                description: 'Technical Director and Co-Founder. Gruun ensures the organization stays ahead of the curve with technology and infrastructure.',
-                stats: [
-                    { label: 'Role', value: 'Tech Lead' },
-                    { label: 'Exp', value: '5+ Years' }
-                ],
-                achievements: ['Founder', 'Developer', 'Technical Director'],
-                socialLinks: {
-                    twitter: 'https://x.com/gruunvfx'
-                }
-            },
-            {
-                name: 'Dixuez',
-                role: 'Ownership',
-                image: '/teams/players/dix.png',
-                game: 'Management',
-                description: 'Managing the day-to-day operations and ensuring smooth execution of team activities.',
-                stats: [
-                    { label: 'Role', value: 'Manager' }
-                ],
-                achievements: ['Team Manager', 'Infrastructure', 'Innovation'],
-                socialLinks: {
-                    twitter: 'https://www.twitch.tv/dixuez'
-                }
-            },
-            {
-                name: 'Jah',
+                name: 'Trapped',
                 role: 'CFO',
-                image: '/logo.png',
+                image: '/teams/players/trapped.jpg',
                 game: 'Management',
-                description: 'Chief Financial Officer. Jah manages the financial health and sponsorship acquisitions for Void Esports.',
+                description: 'Chief Financial Officer. Trapped manages the financial health and sponsorship acquisitions for Void Esports.',
                 stats: [
                     { label: 'Role', value: 'CFO' }
                 ],
                 achievements: ['Financial Director', 'Sponsorship', 'Growth Strategy'],
+                socialLinks: {}
+            },
+            {
+                name: 'Jah',
+                role: 'Head of Ops',
+                image: '/logo.png',
+                game: 'Management',
+                description: 'Head of Operations. Jah oversees the day-to-day operations and ensures smooth execution across all teams.',
+                stats: [
+                    { label: 'Role', value: 'Head of Ops' }
+                ],
+                achievements: ['Operations', 'Team Coordination', 'Strategy'],
                 socialLinks: {
                     twitter: 'https://twitter.com/voiddrpuffin'
                 }
             },
             {
-                name: 'Nick',
-                role: 'CEO',
-                image: '/teams/players/nick.png',
+                name: 'Audio',
+                role: 'BOD',
+                image: '/logo.png',
                 game: 'Management',
-                description: 'Chief Executive Officer. Nick leads the community engagement and overall management of the organization.',
+                description: 'Board of Directors. Audio provides strategic oversight and governance for Void Esports.',
                 stats: [
-                    { label: 'Role', value: 'CEO' }
+                    { label: 'Role', value: 'BOD' }
                 ],
-                achievements: ['Innovation', 'Community Manager', 'Manager'],
-                socialLinks: {
-                    twitter: 'https://x.com/void_nicholas'
-                }
+                achievements: ['Board of Directors', 'Strategic Oversight', 'Governance'],
+                socialLinks: {}
             },
         ],
         achievements: ['The Owners of Void Esports'],

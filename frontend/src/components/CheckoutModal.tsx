@@ -76,6 +76,7 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
   const [orderProcessed, setOrderProcessed] = useState(false);
   const [shippingCost, setShippingCost] = useState<number>(0);
+  const [pendingOrderId, setPendingOrderId] = useState<string>('');
   // Remove shipping calculation effect since we're not calculating shipping
   // const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
 
@@ -222,6 +223,7 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
       // Generate order number for metadata
       const orderNumber = generateOrderNumber();
       const tempOrderId = `Void_Order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      setPendingOrderId(tempOrderId);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
@@ -614,9 +616,8 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
                     customerInfo={customerInfo}
                     items={items}
                     onSuccess={async (paymentData: any) => {
-                      // Create order in Firestore only after successful payment
-                      const orderNumber = generateOrderNumber();
-                      const finalOrderId = `Void_Order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                      // Use the same order ID that was sent to Stripe metadata (used by webhook)
+                      const finalOrderId = pendingOrderId || `Void_Order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                       
                       const completedOrderData = {
                         id: finalOrderId,

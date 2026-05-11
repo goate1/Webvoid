@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { FaTwitter, FaDiscord, FaTwitch, FaYoutube, FaInstagram, FaTiktok, FaFacebook, FaLinkedin } from 'react-icons/fa';
-import { socialService, type SocialLink } from '@/lib/socialService';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  FaTwitter,
+  FaDiscord,
+  FaTwitch,
+  FaYoutube,
+  FaInstagram,
+  FaTiktok,
+  FaFacebook,
+  FaLinkedin,
+} from "react-icons/fa";
+import { socialService, type SocialLink } from "@/lib/socialService";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   twitter: FaTwitter,
@@ -17,16 +25,29 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   linkedin: FaLinkedin,
 };
 
-const footerLinks = [
-  { name: 'Contact', href: '/contact' },
-  { name: 'Ambassadors', href: '/ambassadors' },
-  { name: 'Careers', href: '/careers' },
-  { name: 'Track Order', href: '/track-order' },
+const orgLinks = [
+  { name: "Home", href: "/" },
+  { name: "Roster", href: "/teams" },
+  { name: "Shop", href: "/shop" },
+  { name: "News", href: "/news" },
+  { name: "About", href: "/about" },
+];
+
+const supportLinks = [
+  { name: "Contact", href: "/contact" },
+  { name: "Track Order", href: "/track-order" },
+  { name: "Ambassadors", href: "/ambassadors" },
+  { name: "Careers", href: "/careers" },
+];
+
+const DEFAULT_SOCIALS: SocialLink[] = [
+  { name: "Twitch", url: "https://www.twitch.tv/voidesports2x", icon: "twitch", order: 1, createdAt: {} as never },
+  { name: "Twitter", url: "https://x.com/VoidEsports2x", icon: "twitter", order: 2, createdAt: {} as never },
+  { name: "Discord", url: "https://discord.gg/ftxyf32wJN", icon: "discord", order: 3, createdAt: {} as never },
 ];
 
 export default function Footer() {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -34,146 +55,96 @@ export default function Footer() {
       try {
         const links = await socialService.getAll();
         if (!mounted) return;
-        
-        if (links.length > 0) {
-          setSocialLinks(links);
-        } else {
-          // Fallback to default organization links
-          setSocialLinks([
-            {
-              name: 'Twitch',
-              url: 'https://www.twitch.tv/voidesports2x',
-              icon: 'twitch',
-              order: 1,
-              createdAt: {} as any
-            },
-            {
-              name: 'Twitter',
-              url: 'https://x.com/VoidEsports2x',
-              icon: 'twitter',
-              order: 2,
-              createdAt: {} as any
-            },
-            {
-              name: 'Discord',
-              url: 'https://discord.gg/ftxyf32wJN',
-              icon: 'discord',
-              order: 3,
-              createdAt: {} as any
-            }
-          ]);
-        }
-      } catch (error) {
-        console.error('Error loading social links:', error);
-        // Fallback to default organization links on error
-        setSocialLinks([
-          {
-            name: 'Twitch',
-            url: 'https://www.twitch.tv/voidesports2x',
-            icon: 'twitch',
-            order: 1,
-            createdAt: {} as any
-          },
-          {
-            name: 'Twitter',
-            url: 'https://x.com/VoidEsports2x',
-            icon: 'twitter',
-            order: 2,
-            createdAt: {} as any
-          },
-          {
-            name: 'Discord',
-            url: 'https://discord.gg/ftxyf32wJN',
-            icon: 'discord',
-            order: 3,
-            createdAt: {} as any
-          }
-        ]);
-      } finally {
-        if (mounted) setLoading(false);
+        setSocialLinks(links.length > 0 ? links : DEFAULT_SOCIALS);
+      } catch {
+        if (mounted) setSocialLinks(DEFAULT_SOCIALS);
       }
     })();
     return () => { mounted = false; };
   }, []);
 
-  const translatedFooterLinks = footerLinks;
-
   return (
-    <footer className="bg-gradient-to-t from-[#2a1a3a] to-[#1a0a2e] border-t border-purple-500/20">
-      <div className="void-container py-8 sm:py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {/* Brand Section */}
-          <div className="space-y-3 sm:space-y-4">
-            <Image src="/logos/new-logo.png" alt="Void Esports Logo" width={120} height={40} className="h-8 sm:h-10 w-auto" />
-            <p className="text-sm sm:text-base text-gray-400">
-              Professional esports organization pushing the boundaries of competitive gaming.
+    <footer className="bg-[#0A0A0A] text-white">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 pt-16 pb-10">
+        {/* Top grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-14 border-b border-white/10">
+          {/* Brand */}
+          <div className="lg:col-span-2">
+            <div className="font-grotesk font-black text-xl tracking-widest uppercase text-white mb-4">
+              VOID ESPORTS
+            </div>
+            <p className="text-sm text-[#6B6B6B] leading-relaxed max-w-xs">
+              Professional esports organization pushing the boundaries of
+              competitive gaming across Fortnite, Rocket League, Rainbow Six, and
+              Apex Legends.
             </p>
-            <p className="text-sm sm:text-base text-gray-400">
-              <br />Website developed by Layne and Alex. CTOs at Void Esports
-            </p>
+            {/* Social icons */}
+            <div className="flex items-center gap-5 mt-6">
+              {socialLinks.map((social) => {
+                const iconKey = social.icon?.toLowerCase() ?? "";
+                const IconComponent = iconMap[iconKey] ?? FaTwitter;
+                let url = social.url;
+                if (iconKey === "twitter") url = "https://x.com/VoidEsports2x";
+                else if (iconKey === "twitch") url = "https://www.twitch.tv/voidesports2x";
+                else if (iconKey === "discord") url = "https://discord.gg/ftxyf32wJN";
+                return (
+                  <Link
+                    key={social.id ?? social.name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="text-[#6B6B6B] hover:text-[#A855F7] transition-colors duration-200"
+                  >
+                    <IconComponent className="h-5 w-5" />
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Org links */}
           <div>
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
-              Quick Links
+            <h4 className="font-grotesk font-bold text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-5">
+              Organization
             </h4>
-            <ul className="space-y-2">
-              {translatedFooterLinks.map((link) => (
-                <li key={link.name}>
+            <ul className="space-y-3">
+              {orgLinks.map((l) => (
+                <li key={l.name}>
                   <Link
-                    href={link.href}
-                    className="text-sm sm:text-base text-gray-400 hover:text-purple-300 transition-colors inline-block min-h-[44px] flex items-center"
+                    href={l.href}
+                    className="text-sm text-[#9B9B9B] hover:text-white transition-colors duration-150"
                   >
-                    {link.name}
+                    {l.name}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Social Links */}
-          <div className="sm:col-span-2 lg:col-span-2">
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-white">
-              Connect With Us
+          {/* Support links */}
+          <div>
+            <h4 className="font-grotesk font-bold text-xs uppercase tracking-[0.12em] text-[#6B6B6B] mb-5">
+              Support
             </h4>
-            <div className="flex flex-wrap gap-4">
-              {loading ? (
-                <div className="text-gray-400 text-sm">Loading social links...</div>
-              ) : socialLinks.length === 0 ? (
-                <div className="text-gray-400 text-sm">No social links available</div>
-              ) : (
-                socialLinks.map((social) => {
-                  const iconKey = social.icon.toLowerCase();
-                  const IconComponent = iconMap[iconKey] || FaTwitter;
-                  
-                  // Priority override for organization links
-                  let displayUrl = social.url;
-                  if (iconKey === 'twitter') displayUrl = 'https://x.com/VoidEsports2x';
-                  else if (iconKey === 'twitch') displayUrl = 'https://www.twitch.tv/voidesports2x';
-                  else if (iconKey === 'discord') displayUrl = 'https://discord.gg/ftxyf32wJN';
-
-                  return (
-                    <Link
-                      key={social.id || social.name}
-                      href={displayUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-gray-400 hover:text-purple-300 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center group"
-                      aria-label={social.name}
-                    >
-                      <span className="sr-only">{social.name}</span>
-                      <IconComponent className="h-6 w-6 sm:h-7 sm:w-7 group-hover:outline group-hover:outline-2 group-hover:outline-purple-300 group-hover:outline-offset-2 group-hover:rounded" />
-                    </Link>
-                  );
-                })
-              )}
-            </div>
+            <ul className="space-y-3">
+              {supportLinks.map((l) => (
+                <li key={l.name}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-[#9B9B9B] hover:text-white transition-colors duration-150"
+                  >
+                    {l.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
 
-        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-purple-500/20">
-          <p className="text-center text-xs sm:text-sm text-gray-400">
+        {/* Bottom bar */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-8">
+          <p className="text-xs text-[#555555]">
             © 2026 Void Esports. All rights reserved.
           </p>
         </div>

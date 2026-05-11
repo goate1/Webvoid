@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
-import { Inter } from "next/font/google";
-import Script from "next/script";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -16,28 +15,33 @@ import { SupportProvider } from "@/contexts/SupportContext";
 import CustomerSupportButton from "@/components/CustomerSupportButton";
 import SecurityInit from "@/components/SecurityInit";
 
-// Removed LanguageProvider import
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
-const inter = Inter({ subsets: ["latin"] });
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Void Esports",
   description: "Professional Esports Organization",
   metadataBase: new URL("https://voidwebsite-smoky.vercel.app"),
   icons: {
-    icon: '/logos/new-logo.png',
-    apple: [
-      { url: '/logos/apple-icon.png', sizes: '180x180' },
-    ],
+    icon: "/logos/new-logo.png",
+    apple: [{ url: "/logos/apple-icon.png", sizes: "180x180" }],
   },
   openGraph: {
     title: "Void Esports",
     description: "Professional Esports Organization",
     url: "https://voidwebsite-smoky.vercel.app",
     siteName: "Void Esports",
-    images: [
-      { url: "/logos/new-logo.png", width: 512, height: 512, alt: "Void" }
-    ],
+    images: [{ url: "/logos/new-logo.png", width: 512, height: 512, alt: "Void" }],
     locale: "en_US",
     type: "website",
   },
@@ -45,28 +49,26 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Void Esports",
     description: "Professional Esports Organization",
-    images: ["/logos/new-logo.png"]
+    images: ["/logos/new-logo.png"],
   },
   manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#000000',
+  themeColor: "#ffffff",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
-        {/* Removed LanguageProvider */}
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}
+        suppressHydrationWarning
+      >
         <DebugProvider>
           <OrderProvider>
             <CartProvider>
@@ -76,9 +78,8 @@ export default function RootLayout({
                     <SecurityInit>
                       <AdvancedPageTransition>
                         <ScrollToTop />
-                        {/* We'll handle navbar visibility in the client-side components */}
                         <Navbar />
-                        <main className="min-h-screen bg-void-purple">{children}</main>
+                        <main className="min-h-screen bg-white">{children}</main>
                         <Footer />
                         <CustomerSupportButton />
                       </AdvancedPageTransition>
