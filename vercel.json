@@ -1,5 +1,9 @@
 {
   "version": 2,
+  "buildCommand": "cd frontend && npm run vercel-build",
+  "installCommand": "cd frontend && npm install",
+  "outputDirectory": "frontend/.next",
+  "framework": "nextjs",
   "env": {
     "NODE_ENV": "production"
   }
