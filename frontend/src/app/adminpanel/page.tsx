@@ -295,7 +295,6 @@ export default function AdminPanelPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"orders" | "dashboard">("orders");
 
   // Orders state
   const [orders, setOrders] = useState<AdminOrder[]>([]);
@@ -427,8 +426,8 @@ export default function AdminPanelPage() {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && activeTab === "orders") loadOrders();
-  }, [isAuthenticated, activeTab, loadOrders]);
+    if (isAuthenticated) loadOrders();
+  }, [isAuthenticated, loadOrders]);
 
   // ── Stats ────────────────────────────────────────────────────
   const totalRevenue = orders.reduce((s, o) => s + (o.total ?? 0), 0);
@@ -531,26 +530,9 @@ export default function AdminPanelPage() {
       {/* Top bar */}
       <div className="bg-white border-b border-[#E5E5E5] sticky top-16 z-10">
         <div className="max-w-[1280px] mx-auto px-6 md:px-12 flex items-center justify-between h-14">
-          <div className="flex items-center gap-6">
-            <span className="font-grotesk font-black uppercase text-[#0A0A0A] tracking-widest text-sm">
-              Admin
-            </span>
-            <div className="flex items-center gap-1">
-              {(["orders", "dashboard"] as const).map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-3 py-1.5 rounded-[4px] text-xs font-grotesk font-bold uppercase tracking-wider transition-colors ${
-                    activeTab === tab
-                      ? "bg-[#0A0A0A] text-white"
-                      : "text-[#6B6B6B] hover:text-[#0A0A0A]"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-          </div>
+          <span className="font-grotesk font-black uppercase text-[#0A0A0A] tracking-widest text-sm">
+            Admin Panel
+          </span>
           <button
             onClick={handleLogout}
             className="text-xs font-grotesk font-bold uppercase tracking-wider text-[#6B6B6B] hover:text-red-500 transition-colors"
@@ -560,174 +542,162 @@ export default function AdminPanelPage() {
         </div>
       </div>
 
-      {activeTab === "orders" ? (
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-8 space-y-8">
-          {/* ── Heading ──────────────────────────────────────── */}
-          <div className="flex items-end justify-between">
-            <h1
-              className="font-grotesk font-black uppercase text-[#0A0A0A] leading-none"
-              style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: "-0.02em" }}
-            >
-              ORDERS
-            </h1>
-            <button
-              onClick={loadOrders}
-              className="text-xs font-grotesk font-bold uppercase tracking-wider text-[#6B6B6B] hover:text-[#A855F7] transition-colors border-b border-[#6B6B6B] hover:border-[#A855F7] pb-0.5"
-            >
-              Refresh
-            </button>
-          </div>
-
-          {/* ── Stat cards ───────────────────────────────────── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard label="Total Orders" value={orders.length} />
-            <StatCard label="Revenue" value={`$${totalRevenue.toFixed(2)}`} />
-            <StatCard label="Pending" value={pending} />
-            <StatCard label="Delivered" value={delivered} />
-          </div>
-
-          {/* ── Filters ──────────────────────────────────────── */}
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-            {/* Search */}
-            <div className="relative flex-1 max-w-xs">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" />
-              <input
-                type="text"
-                className="void-input pl-9"
-                placeholder="Search name, email, order ID…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-
-            {/* Status pills */}
-            <div className="flex flex-wrap gap-2">
-              {STATUS_FILTERS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setStatusFilter(s)}
-                  className={`px-3 py-1 rounded-[4px] text-[11px] font-grotesk font-bold uppercase tracking-wider border transition-colors ${
-                    statusFilter === s
-                      ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
-                      : "border-[#E5E5E5] text-[#6B6B6B] hover:border-[#A855F7] hover:text-[#0A0A0A]"
-                  }`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Table ────────────────────────────────────────── */}
-          <div className="bg-white border border-[#E5E5E5] rounded-[4px] overflow-hidden">
-            {ordersLoading ? (
-              <div className="flex items-center justify-center py-16">
-                <div className="loading-spinner" />
-              </div>
-            ) : filtered.length === 0 ? (
-              <div className="text-center py-16 text-[#6B6B6B] text-sm">
-                No orders found.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[#E5E5E5] bg-[#F5F5F5]">
-                      {["Order ID", "Date", "Customer", "Email", "Discord", "Items", "Total", "Status", ""].map((h) => (
-                        <th
-                          key={h}
-                          className="px-4 py-3 text-left text-[10px] font-grotesk font-bold uppercase tracking-[0.12em] text-[#6B6B6B] whitespace-nowrap"
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((order) => {
-                      const ci = order.customerInfo ?? {};
-                      const itemSummary = order.items
-                        .map((i) => {
-                          const extras: string[] = [];
-                          if (i.customization?.size) extras.push(i.customization.size.toUpperCase());
-                          const cf = i.customization?.customFields ?? {};
-                          if (cf["color"]) extras.push(cf["color"]);
-                          if (cf["nameOnBack"]) extras.push(`#${cf["nameOnBack"]}`);
-                          if (cf["sponsorPatch"]) extras.push("Patch");
-                          // surface any remaining custom fields
-                          Object.entries(cf).forEach(([k, v]) => {
-                            if (!["color","nameOnBack","sponsorPatch"].includes(k)) extras.push(v);
-                          });
-                          return `${i.name}${extras.length ? ` (${extras.join(", ")})` : ""}×${i.quantity}`;
-                        })
-                        .join(", ");
-
-                      return (
-                        <tr
-                          key={order.id}
-                          className="border-b border-[#F5F5F5] hover:bg-[#FAFAFA] transition-colors"
-                        >
-                          <td className="px-4 py-3 font-grotesk font-bold text-[#0A0A0A] text-xs">
-                            #{order.id.slice(-8).toUpperCase()}
-                          </td>
-                          <td className="px-4 py-3 text-[#6B6B6B] whitespace-nowrap">
-                            {order.createdAt}
-                          </td>
-                          <td className="px-4 py-3 font-medium text-[#0A0A0A] whitespace-nowrap">
-                            {ci.name ?? "—"}
-                          </td>
-                          <td className="px-4 py-3 text-[#6B6B6B] max-w-[140px] truncate">
-                            {ci.email ?? "—"}
-                          </td>
-                          <td className="px-4 py-3 text-[#6B6B6B]">
-                            {ci.discordUsername ?? "—"}
-                          </td>
-                          <td className="px-4 py-3 text-[#6B6B6B] max-w-[200px] truncate text-xs">
-                            {itemSummary || "—"}
-                          </td>
-                          <td className="px-4 py-3 font-grotesk font-bold text-[#A855F7] whitespace-nowrap">
-                            ${order.total.toFixed(2)}
-                          </td>
-                          <td className="px-4 py-3">
-                            <select
-                              value={order.status}
-                              onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
-                              className={`text-[11px] font-grotesk font-bold uppercase tracking-wide rounded-[2px] px-2 py-0.5 border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#A855F7] ${STATUS_STYLES[order.status]?.bg ?? "bg-[#F5F5F5]"} ${STATUS_STYLES[order.status]?.text ?? "text-[#6B6B6B]"}`}
-                            >
-                              {(["pending","accepted","processing","delivered","declined","canceled"] as OrderStatus[]).map((s) => (
-                                <option key={s} value={s}>{s}</option>
-                              ))}
-                            </select>
-                          </td>
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => setSelectedOrder(order)}
-                              className="text-xs font-grotesk font-bold uppercase tracking-wider text-[#6B6B6B] hover:text-[#A855F7] transition-colors"
-                            >
-                              View
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        </div>
-      ) : (
-        /* ── Full AdminDashboard tab ────────────────────────── */
-        <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-8">
+      {/* ── Orders section ─────────────────────────────────── */}
+      <div className="max-w-[1280px] mx-auto px-6 md:px-12 py-8 space-y-8">
+        <div className="flex items-end justify-between">
           <h1
-            className="font-grotesk font-black uppercase text-[#0A0A0A] leading-none mb-8"
-            style={{ fontSize: "clamp(24px, 3vw, 36px)", letterSpacing: "-0.02em" }}
+            className="font-grotesk font-black uppercase text-[#0A0A0A] leading-none"
+            style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: "-0.02em" }}
           >
-            DASHBOARD
+            ORDERS
           </h1>
-          <AdminDashboard />
+          <button
+            onClick={loadOrders}
+            className="text-xs font-grotesk font-bold uppercase tracking-wider text-[#6B6B6B] hover:text-[#A855F7] transition-colors border-b border-[#6B6B6B] hover:border-[#A855F7] pb-0.5"
+          >
+            Refresh
+          </button>
         </div>
-      )}
+
+        {/* Stat cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard label="Total Orders" value={orders.length} />
+          <StatCard label="Revenue" value={`$${totalRevenue.toFixed(2)}`} />
+          <StatCard label="Pending" value={pending} />
+          <StatCard label="Delivered" value={delivered} />
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          <div className="relative flex-1 max-w-xs">
+            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6B6B6B]" />
+            <input
+              type="text"
+              className="void-input pl-9"
+              placeholder="Search name, email, order ID…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {STATUS_FILTERS.map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1 rounded-[4px] text-[11px] font-grotesk font-bold uppercase tracking-wider border transition-colors ${
+                  statusFilter === s
+                    ? "bg-[#0A0A0A] text-white border-[#0A0A0A]"
+                    : "border-[#E5E5E5] text-[#6B6B6B] hover:border-[#A855F7] hover:text-[#0A0A0A]"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Orders table */}
+        <div className="bg-white border border-[#E5E5E5] rounded-[4px] overflow-hidden">
+          {ordersLoading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="loading-spinner" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="text-center py-16 text-[#6B6B6B] text-sm">
+              No orders found.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#E5E5E5] bg-[#F5F5F5]">
+                    {["Order ID", "Date", "Customer", "Email", "Discord", "Items", "Total", "Status", ""].map((h) => (
+                      <th
+                        key={h}
+                        className="px-4 py-3 text-left text-[10px] font-grotesk font-bold uppercase tracking-[0.12em] text-[#6B6B6B] whitespace-nowrap"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((order) => {
+                    const ci = order.customerInfo ?? {};
+                    const itemSummary = order.items
+                      .map((i) => {
+                        const extras: string[] = [];
+                        if (i.customization?.size) extras.push(i.customization.size.toUpperCase());
+                        const cf = i.customization?.customFields ?? {};
+                        if (cf["color"]) extras.push(cf["color"]);
+                        if (cf["nameOnBack"]) extras.push(`#${cf["nameOnBack"]}`);
+                        if (cf["sponsorPatch"]) extras.push("Patch");
+                        Object.entries(cf).forEach(([k, v]) => {
+                          if (!["color","nameOnBack","sponsorPatch"].includes(k)) extras.push(v);
+                        });
+                        return `${i.name}${extras.length ? ` (${extras.join(", ")})` : ""}×${i.quantity}`;
+                      })
+                      .join(", ");
+
+                    return (
+                      <tr
+                        key={order.id}
+                        className="border-b border-[#F5F5F5] hover:bg-[#FAFAFA] transition-colors"
+                      >
+                        <td className="px-4 py-3 font-grotesk font-bold text-[#0A0A0A] text-xs">
+                          #{order.id.slice(-8).toUpperCase()}
+                        </td>
+                        <td className="px-4 py-3 text-[#6B6B6B] whitespace-nowrap">
+                          {order.createdAt}
+                        </td>
+                        <td className="px-4 py-3 font-medium text-[#0A0A0A] whitespace-nowrap">
+                          {ci.name ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-[#6B6B6B] max-w-[140px] truncate">
+                          {ci.email ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-[#6B6B6B]">
+                          {ci.discordUsername ?? "—"}
+                        </td>
+                        <td className="px-4 py-3 text-[#6B6B6B] max-w-[200px] truncate text-xs">
+                          {itemSummary || "—"}
+                        </td>
+                        <td className="px-4 py-3 font-grotesk font-bold text-[#A855F7] whitespace-nowrap">
+                          ${order.total.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleStatusChange(order.id, e.target.value as OrderStatus)}
+                            className={`text-[11px] font-grotesk font-bold uppercase tracking-wide rounded-[2px] px-2 py-0.5 border-0 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#A855F7] ${STATUS_STYLES[order.status]?.bg ?? "bg-[#F5F5F5]"} ${STATUS_STYLES[order.status]?.text ?? "text-[#6B6B6B]"}`}
+                          >
+                            {(["pending","accepted","processing","delivered","declined","canceled"] as OrderStatus[]).map((s) => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => setSelectedOrder(order)}
+                            className="text-xs font-grotesk font-bold uppercase tracking-wider text-[#6B6B6B] hover:text-[#A855F7] transition-colors"
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Full Dashboard (content management) ────────────── */}
+      <div className="border-t border-[#E5E5E5]">
+        <AdminDashboard />
+      </div>
     </div>
   );
 }
