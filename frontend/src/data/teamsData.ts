@@ -81,7 +81,7 @@ export const fallbackTeams: DisplayTeam[] = [
                 }
             }
         ],
-        achievements: ['2x FNCS Grand Finals', '200K+ PR', '5k+ Earnings'],
+        achievements: ['11x Grands', '3x solo series finalists', '200K+ PR', '5k+ Earnings'],
     },
     {
         name: 'Ownership',
