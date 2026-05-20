@@ -23,17 +23,17 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
-  // Close when clicking outside
+  // Close when tapping outside
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
+    function handlePointer(e: PointerEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setMobileMenuOpen(false);
       }
     }
     if (mobileMenuOpen) {
-      document.addEventListener("mousedown", handleClick);
+      document.addEventListener("pointerdown", handlePointer);
     }
-    return () => document.removeEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("pointerdown", handlePointer);
   }, [mobileMenuOpen]);
 
   // Hide navbar during checkout
@@ -41,10 +41,9 @@ export default function Navbar() {
   if (isCheckoutActive) return null;
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white border-b border-[#E5E5E5] z-[100] h-16">
+    <header className="fixed top-0 left-0 right-0 bg-white border-b border-[#E5E5E5] z-[100] h-16" ref={menuRef}>
       <nav
         className="max-w-[1280px] mx-auto h-full flex items-center justify-between px-6 md:px-12"
-        ref={menuRef}
       >
         {/* Wordmark */}
         <Link
