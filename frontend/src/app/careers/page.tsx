@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { AnimatedHeroSection, AnimatedCard, StaggeredList, StaggeredItem, FadeInSection } from '@/components/FramerAnimations';
 
 export default function CareersPage() {
@@ -21,7 +20,6 @@ export default function CareersPage() {
         {/* Ad Spot - Banner at top */}
         <div className="pt-20 pb-8 px-6">
           <div className="max-w-7xl mx-auto">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
 
@@ -91,7 +89,6 @@ export default function CareersPage() {
         {/* Ad Spot - Banner before CTA */}
         <div className="py-8 px-6 bg-[#0F0F0F]">
           <div className="max-w-7xl mx-auto">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
 
@@ -116,7 +113,6 @@ export default function CareersPage() {
         {/* Ad Spot - Banner at bottom */}
         <div className="py-8 px-6 bg-black">
           <div className="max-w-7xl mx-auto">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
 

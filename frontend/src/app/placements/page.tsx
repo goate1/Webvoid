@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import PlacementGrid from '@/components/PlacementGrid';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { ParallaxText, AnimatedCard, ScrollProgress, FadeInSection } from '@/components/FramerAnimations';
 import { placementService } from '@/lib/placementService';
 
@@ -142,7 +141,6 @@ export default function Placements() {
       <div className="void-container">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <div className="text-center mb-8 sm:mb-12">
@@ -179,7 +177,6 @@ export default function Placements() {
 
         {/* Ad Spot - Banner before placements */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <div>
@@ -188,7 +185,6 @@ export default function Placements() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-12">
-          <AdPlaceholder size="banner" />
         </div>
       </div>
     </div>

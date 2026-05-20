@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
-import AdPlaceholder from '@/components/AdPlaceholder';
 
 export default function PaymentSuccessPage() {
   const { clearCart } = useCart();
@@ -18,7 +17,6 @@ export default function PaymentSuccessPage() {
       <div className="container mx-auto px-4 py-12">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <div className="text-center max-w-md mx-auto">
@@ -47,7 +45,6 @@ export default function PaymentSuccessPage() {
 
           {/* Ad Spot - Banner at bottom */}
           <div className="mt-12">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
       </div>

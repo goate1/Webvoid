@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { productService, type Product, type CustomField, type Size, getLocationSpecificPrice } from '@/lib/productService';
 import { useCart } from '@/contexts/CartContext';
 import { AnimatedCard } from '@/components/FramerAnimations';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import ReviewModal from '@/components/ReviewModal';
 import ReviewList from '@/components/ReviewList';
 import LoadingScreen from '@/components/LoadingScreen';
@@ -328,7 +327,6 @@ export default function ProductDetailPage() {
             </AnimatedCard>
 
             {/* Ad Placeholder */}
-            <AdPlaceholder size="banner" />
           </div>
 
           {/* Product Info */}

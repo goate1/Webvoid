@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import AnimatedSection from '@/components/AnimatedSection';
 import Link from 'next/link';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { AnimatedCard, StaggeredList, StaggeredItem, ParallaxText, FadeInSection, ScrollProgress } from '@/components/FramerAnimations';
 
 const values = [
@@ -37,7 +36,6 @@ export default function AboutPage() {
       <div className="void-container py-8 sm:py-12 relative z-10">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Hero Section */}
@@ -99,7 +97,6 @@ export default function AboutPage() {
 
         {/* Ad Spot - Banner before CTA */}
         <div className="mt-16 mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* CTA Section */}
@@ -119,7 +116,6 @@ export default function AboutPage() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-16">
-          <AdPlaceholder size="banner" />
         </div>
       </div>
     </div>

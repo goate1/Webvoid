@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { TrashIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import CheckoutModal from '@/components/CheckoutModal';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { getCurrencyForCountry, formatFromUSD } from '@/lib/currencyService';
 
 export default function CartPage() {
@@ -50,7 +49,6 @@ export default function CartPage() {
         <div className="container mx-auto px-4 py-12 relative z-10">
           {/* Ad Spot - Banner at top */}
           <div className="mb-8">
-            <AdPlaceholder size="banner" />
           </div>
 
           <div className="text-center">
@@ -72,7 +70,6 @@ export default function CartPage() {
 
           {/* Ad Spot - Banner at bottom */}
           <div className="mt-12">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
       </div>
@@ -89,7 +86,6 @@ export default function CartPage() {
       <div className="container mx-auto px-4 py-12 relative z-10">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <div className="mb-8">
@@ -353,7 +349,6 @@ export default function CartPage() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-12">
-          <AdPlaceholder size="banner" />
         </div>
       </div>
     </div>

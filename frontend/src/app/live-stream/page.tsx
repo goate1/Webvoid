@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { AnimatedHeroSection, StaggeredList, StaggeredItem, AnimatedCard } from '@/components/FramerAnimations';
 
 interface Streamer {
@@ -45,7 +44,6 @@ export default function LiveStreamPage() {
       <div className="void-container py-12">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <AnimatedHeroSection>
@@ -81,7 +79,6 @@ export default function LiveStreamPage() {
         
         {/* Ad Spot - Banner before streamers */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Our Streamers Section */}
@@ -135,7 +132,6 @@ export default function LiveStreamPage() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-12">
-          <AdPlaceholder size="banner" />
         </div>
       </div>
     </div>

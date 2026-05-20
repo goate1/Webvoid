@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import AnimatedSection from '@/components/AnimatedSection';
 import NewsArticleModal from '@/components/NewsArticleModal';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { newsService, type NewsArticle as FSNews } from '@/lib/newsService';
 
 type DisplayArticle = {
@@ -174,7 +173,6 @@ export default function NewsPage() {
 
         {/* Ad Spot - Banner at top of news page */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
         
         {/* Upcoming Events Section */}
@@ -241,7 +239,6 @@ export default function NewsPage() {
         {/* Ad Spot - Banner between sections */}
         {upcomingEvents.length > 0 && (
           <div className="mb-8">
-            <AdPlaceholder size="banner" />
           </div>
         )}
         
@@ -258,7 +255,6 @@ export default function NewsPage() {
               if (index > 0 && index % 4 === 0) {
                 items.push(
                   <div key={`ad-${index}`} className="sm:col-span-2 mb-4">
-                    <AdPlaceholder size="banner" />
                   </div>
                 );
               }
@@ -316,7 +312,6 @@ export default function NewsPage() {
           
           {/* Ad Spot - Banner at bottom of news section */}
           <div className="mt-12">
-            <AdPlaceholder size="banner" />
           </div>
         </AnimatedSection>
       </div>

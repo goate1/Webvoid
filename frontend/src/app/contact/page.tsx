@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from 'react';
-import AdPlaceholder from '@/components/AdPlaceholder';
 
 export default function ContactPage() {
   const [formData, setFormData] = React.useState({
@@ -56,7 +55,6 @@ export default function ContactPage() {
       <div className="void-container py-12 relative z-10">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <div className="max-w-2xl mx-auto">
@@ -153,7 +151,6 @@ export default function ContactPage() {
 
           {/* Ad Spot - Banner at bottom */}
           <div className="mt-12">
-            <AdPlaceholder size="banner" />
           </div>
         </div>
       </div>

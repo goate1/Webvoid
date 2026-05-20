@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import AnimatedSection from '@/components/AnimatedSection';
 import PlayerCard from '@/components/PlayerCard';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { ambassadorService, type Ambassador } from '@/lib/ambassadorService';
 
 export default function AmbassadorsPage() {
@@ -35,7 +34,6 @@ export default function AmbassadorsPage() {
       <div className="void-container py-8 sm:py-12">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Hero Section */}
@@ -136,7 +134,6 @@ export default function AmbassadorsPage() {
 
         {/* Ad Spot - Banner before ambassadors */}
         <div className="mb-12">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Current Ambassadors Section */}
@@ -173,7 +170,6 @@ export default function AmbassadorsPage() {
 
         {/* Ad Spot - Banner before CTA */}
         <div className="mb-12">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Final CTA */}
@@ -197,7 +193,6 @@ export default function AmbassadorsPage() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-12">
-          <AdPlaceholder size="banner" />
         </div>
 
       </div>

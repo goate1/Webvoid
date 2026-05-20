@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import AnimatedSection from '@/components/AnimatedSection';
-import AdPlaceholder from '@/components/AdPlaceholder';
 import { scheduleService, type Match, type Event } from '@/lib/scheduleService';
 
 const fallbackMatches = [
@@ -77,7 +76,6 @@ export default function SchedulePage() {
       <div className="void-container py-8 sm:py-12">
         {/* Ad Spot - Banner at top */}
         <div className="mb-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         <AnimatedSection animationType="fadeIn" delay={100}>
@@ -129,7 +127,6 @@ export default function SchedulePage() {
         
         {/* Ad Spot - Banner between sections */}
         <div className="my-8">
-          <AdPlaceholder size="banner" />
         </div>
 
         {/* Upcoming Events */}
@@ -177,7 +174,6 @@ export default function SchedulePage() {
 
         {/* Ad Spot - Banner at bottom */}
         <div className="mt-12">
-          <AdPlaceholder size="banner" />
         </div>
       </div>
     </div>
