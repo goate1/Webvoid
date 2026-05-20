@@ -31,7 +31,7 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   title: "Void Esports",
   description: "Professional Esports Organization",
-  metadataBase: new URL("https://voidwebsite-smoky.vercel.app"),
+  metadataBase: new URL("https://voidesports.net"),
   icons: {
     icon: "/logos/new-logo.png",
     apple: [{ url: "/logos/apple-icon.png", sizes: "180x180" }],
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Void Esports",
     description: "Professional Esports Organization",
-    url: "https://voidwebsite-smoky.vercel.app",
+    url: "https://voidesports.net",
     siteName: "Void Esports",
-    images: [{ url: "/logos/new-logo.png", width: 512, height: 512, alt: "Void" }],
+    images: [{ url: "/void-banner.jpg", width: 1200, height: 630, alt: "Void Esports" }],
     locale: "en_US",
     type: "website",
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Void Esports",
     description: "Professional Esports Organization",
-    images: ["/logos/new-logo.png"],
+    images: ["/void-banner.jpg"],
   },
   manifest: "/manifest.webmanifest",
 };
