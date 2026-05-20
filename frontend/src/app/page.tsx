@@ -380,27 +380,6 @@ export default function Home() {
           </Link>
         </div>
       </section>
-
-      {/* ── 7. PARTNERS ───────────────────────────────────────── */}
-      <section className="bg-[#F5F5F5] py-16 md:py-20">
-        <div className="void-container">
-          <p className="font-grotesk text-[10px] uppercase tracking-[0.25em] text-[#6B6B6B] mb-10">
-            OUR PARTNERS
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <div
-                key={n}
-                className="w-32 h-14 bg-[#E5E5E5] rounded-[4px] flex items-center justify-center border border-[#D4D4D4]"
-              >
-                <span className="text-[10px] font-grotesk font-bold uppercase tracking-wider text-[#9B9B9B]">
-                  PARTNER {n}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
