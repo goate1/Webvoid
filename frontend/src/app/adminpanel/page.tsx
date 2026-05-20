@@ -5,8 +5,143 @@ import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebas
 import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import AdminDashboard from "@/components/AdminDashboard";
-import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon, MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import OrderRecovery from "@/components/admin/OrderRecovery";
+
+// ── Repulse matcher types ─────────────────────────────────────
+interface RepulseOrder {
+  name?: string;
+  email?: string;
+  date?: string;
+  price?: number;
+  status?: string;
+  orderId?: string;
+  raw: string;
+}
+
+function normalName(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+/** Try to parse pasted text as JSON array, then HTML table rows, then TSV/CSV */
+function parseRepulseText(raw: string): RepulseOrder[] {
+  const trimmed = raw.trim();
+
+  // ── 1. JSON array ─────────────────────────────────────────
+  if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      const arr: unknown[] = Array.isArray(parsed) ? parsed : [parsed];
+      return arr.map((item) => {
+        const o = item as Record<string, unknown>;
+        const price = parseFloat(String(o.price ?? o.total ?? o.amount ?? ""));
+        return {
+          name: String(o.name ?? o.customerName ?? o.customer ?? o.fullName ?? ""),
+          email: String(o.email ?? o.customerEmail ?? ""),
+          date: String(o.date ?? o.createdAt ?? o.orderDate ?? ""),
+          price: isNaN(price) ? undefined : price,
+          status: String(o.status ?? o.fulfillmentStatus ?? ""),
+          orderId: String(o.id ?? o.orderId ?? o.order_id ?? ""),
+          raw: JSON.stringify(o),
+        };
+      });
+    } catch {
+      // fall through
+    }
+  }
+
+  // ── 2. HTML table (copy-paste from browser) ────────────────
+  if (trimmed.includes("<tr") || trimmed.includes("<td")) {
+    const rows: RepulseOrder[] = [];
+    const trMatches = [...trimmed.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)];
+    const headers: string[] = [];
+    trMatches.forEach((tr, idx) => {
+      const cells = [...tr[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map(
+        (m) => m[1].replace(/<[^>]+>/g, "").trim()
+      );
+      if (idx === 0) {
+        headers.push(...cells.map((c) => c.toLowerCase()));
+        return;
+      }
+      const obj: Record<string, string> = {};
+      cells.forEach((c, i) => { obj[headers[i] ?? String(i)] = c; });
+      const rawStr = cells.join(" | ");
+      const price = parseFloat(
+        (obj["total"] ?? obj["price"] ?? obj["amount"] ?? "").replace(/[^0-9.]/g, "")
+      );
+      rows.push({
+        name: obj["name"] ?? obj["customer"] ?? obj["customer name"] ?? "",
+        email: obj["email"] ?? "",
+        date: obj["date"] ?? obj["order date"] ?? obj["created"] ?? "",
+        price: isNaN(price) ? undefined : price,
+        status: obj["status"] ?? obj["fulfillment"] ?? "",
+        orderId: obj["id"] ?? obj["order id"] ?? obj["order #"] ?? "",
+        raw: rawStr,
+      });
+    });
+    if (rows.length > 0) return rows;
+  }
+
+  // ── 3. TSV / CSV (tab or comma separated) ─────────────────
+  const lines = trimmed.split(/\r?\n/).filter(Boolean);
+  if (lines.length > 1) {
+    const sep = lines[0].includes("\t") ? "\t" : ",";
+    const headers = lines[0].split(sep).map((h) => h.replace(/"/g, "").trim().toLowerCase());
+    return lines.slice(1).map((line) => {
+      const cells = line.split(sep).map((c) => c.replace(/"/g, "").trim());
+      const obj: Record<string, string> = {};
+      cells.forEach((c, i) => { obj[headers[i] ?? String(i)] = c; });
+      const rawStr = cells.join(" | ");
+      const price = parseFloat(
+        (obj["total"] ?? obj["price"] ?? obj["amount"] ?? "").replace(/[^0-9.]/g, "")
+      );
+      return {
+        name: obj["name"] ?? obj["customer"] ?? obj["customer name"] ?? "",
+        email: obj["email"] ?? "",
+        date: obj["date"] ?? obj["order date"] ?? obj["created"] ?? "",
+        price: isNaN(price) ? undefined : price,
+        status: obj["status"] ?? obj["fulfillment"] ?? "",
+        orderId: obj["id"] ?? obj["order id"] ?? obj["order #"] ?? "",
+        raw: rawStr,
+      };
+    });
+  }
+
+  return [];
+}
+
+/** Find best-match Repulse order for a Void order */
+function matchRepulse(
+  order: { customerInfo?: { name?: string; email?: string }; total?: number },
+  repulse: RepulseOrder[]
+): RepulseOrder | null {
+  const ciName = normalName(order.customerInfo?.name ?? "");
+  const ciEmail = (order.customerInfo?.email ?? "").toLowerCase();
+  const ciTotal = order.total;
+
+  // Exact email match
+  if (ciEmail) {
+    const byEmail = repulse.find((r) => r.email && r.email.toLowerCase() === ciEmail);
+    if (byEmail) return byEmail;
+  }
+  // Normalised name match
+  if (ciName) {
+    const byName = repulse.find((r) => r.name && normalName(r.name) === ciName);
+    if (byName) return byName;
+  }
+  // Partial name + price match
+  if (ciName && ciTotal) {
+    const byPartial = repulse.find(
+      (r) =>
+        r.name &&
+        (normalName(r.name).includes(ciName) || ciName.includes(normalName(r.name))) &&
+        r.price !== undefined &&
+        Math.abs(r.price - ciTotal) < 1
+    );
+    if (byPartial) return byPartial;
+  }
+  return null;
+}
 
 // ── Types ─────────────────────────────────────────────────────
 type OrderStatus =
@@ -304,6 +439,36 @@ export default function AdminPanelPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
 
+  // Repulse matcher state
+  const [repulseOrders, setRepulseOrders] = useState<RepulseOrder[]>([]);
+  const [repulsePaste, setRepulsePaste] = useState("");
+  const [repulseError, setRepulseError] = useState("");
+  const [repulseOpen, setRepulseOpen] = useState(false);
+  const [manualIds, setManualIds] = useState<Record<string, string>>(() => {
+    try {
+      return JSON.parse(localStorage.getItem("void-repulse-manual-ids") ?? "{}");
+    } catch { return {}; }
+  });
+
+  const saveManualId = useCallback((orderId: string, value: string) => {
+    setManualIds((prev) => {
+      const next = { ...prev, [orderId]: value };
+      try { localStorage.setItem("void-repulse-manual-ids", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
+
+  const handleRepulseParse = useCallback(() => {
+    setRepulseError("");
+    if (!repulsePaste.trim()) { setRepulseOrders([]); return; }
+    const result = parseRepulseText(repulsePaste);
+    if (result.length === 0) {
+      setRepulseError("Could not parse the pasted data. Try JSON, HTML table, or TSV/CSV.");
+    } else {
+      setRepulseOrders(result);
+    }
+  }, [repulsePaste]);
+
   // ── Auth ────────────────────────────────────────────────────
   useEffect(() => {
     if (!auth) return;
@@ -564,6 +729,66 @@ export default function AdminPanelPage() {
         {/* Order recovery — only shows if localStorage has backup orders */}
         <OrderRecovery />
 
+        {/* ── Repulse Matcher ─────────────────────────────────── */}
+        <div className="bg-white border border-[#E5E5E5] rounded-[4px] overflow-hidden">
+          <button
+            onClick={() => setRepulseOpen((v) => !v)}
+            className="w-full flex items-center justify-between px-5 py-4 text-left hover:bg-[#FAFAFA] transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <span className="font-grotesk font-black uppercase text-[#0A0A0A] tracking-wide text-sm">
+                Repulse Matcher
+              </span>
+              {repulseOrders.length > 0 && (
+                <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-[2px] text-[10px] font-grotesk font-bold uppercase tracking-wider">
+                  {repulseOrders.length} orders loaded
+                </span>
+              )}
+            </div>
+            {repulseOpen ? (
+              <ChevronUpIcon className="h-4 w-4 text-[#6B6B6B]" />
+            ) : (
+              <ChevronDownIcon className="h-4 w-4 text-[#6B6B6B]" />
+            )}
+          </button>
+
+          {repulseOpen && (
+            <div className="px-5 pb-5 border-t border-[#E5E5E5] space-y-4 pt-4">
+              <p className="text-xs text-[#6B6B6B] leading-relaxed">
+                Paste JSON, an HTML table, or a CSV/TSV export from your{" "}
+                <span className="font-semibold text-[#0A0A0A]">Repulse Studios Orders</span> portal below.
+                The matcher will link Repulse orders to Void orders by email, then name.
+              </p>
+              <textarea
+                rows={6}
+                className="void-input font-mono text-xs resize-y"
+                placeholder={'[\n  { "name": "John Doe", "email": "john@example.com", "status": "Shipped", "total": 49.99 }\n]'}
+                value={repulsePaste}
+                onChange={(e) => setRepulsePaste(e.target.value)}
+              />
+              {repulseError && (
+                <p className="text-xs text-red-500">{repulseError}</p>
+              )}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleRepulseParse}
+                  className="px-4 py-2 bg-[#0A0A0A] text-white text-xs font-grotesk font-bold uppercase tracking-wider rounded-[4px] hover:bg-[#333] transition-colors"
+                >
+                  Parse &amp; Match
+                </button>
+                {repulseOrders.length > 0 && (
+                  <button
+                    onClick={() => { setRepulseOrders([]); setRepulsePaste(""); }}
+                    className="px-4 py-2 border border-[#E5E5E5] text-[#6B6B6B] text-xs font-grotesk font-bold uppercase tracking-wider rounded-[4px] hover:border-red-300 hover:text-red-500 transition-colors"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard label="Total Orders" value={orders.length} />
@@ -617,7 +842,7 @@ export default function AdminPanelPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-[#E5E5E5] bg-[#F5F5F5]">
-                    {["Order ID", "Date", "Customer", "Email", "Discord", "Items", "Total", "Status", ""].map((h) => (
+                    {["Order ID", "Date", "Customer", "Email", "Discord", "Items", "Total", "Status", "Repulse", ""].map((h) => (
                       <th
                         key={h}
                         className="px-4 py-3 text-left text-[10px] font-grotesk font-bold uppercase tracking-[0.12em] text-[#6B6B6B] whitespace-nowrap"
@@ -681,6 +906,37 @@ export default function AdminPanelPage() {
                               <option key={s} value={s}>{s}</option>
                             ))}
                           </select>
+                        </td>
+                        {/* Repulse match */}
+                        <td className="px-4 py-3 min-w-[180px]">
+                          {(() => {
+                            const manual = manualIds[order.id] ?? "";
+                            const match = repulseOrders.length > 0
+                              ? matchRepulse(order, repulseOrders)
+                              : null;
+                            return (
+                              <div className="space-y-1.5">
+                                {repulseOrders.length > 0 && (
+                                  match ? (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-grotesk font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-[2px]">
+                                      🟢 Matched{match.status ? ` · ${match.status}` : ""}
+                                    </span>
+                                  ) : (
+                                    <span className="inline-flex items-center gap-1 text-[10px] font-grotesk font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-[2px]">
+                                      ⚠️ Unlinked
+                                    </span>
+                                  )
+                                )}
+                                <input
+                                  type="text"
+                                  placeholder="Manual Repulse ID…"
+                                  className="void-input text-[11px] py-1 px-2 w-full"
+                                  value={manual}
+                                  onChange={(e) => saveManualId(order.id, e.target.value)}
+                                />
+                              </div>
+                            );
+                          })()}
                         </td>
                         <td className="px-4 py-3">
                           <button

@@ -70,7 +70,7 @@ export default function CartIcon() {
             
             <Link
               href="/cart"
-              className="block w-full bg-[#FFFFFF] hover:bg-[#FFFFFF]/90 text-black text-center py-2 px-4 rounded-lg transition-all duration-300 font-medium"
+              className="block w-full bg-[#0A0A0A] hover:bg-[#222] text-white text-center py-2 px-4 rounded-lg transition-all duration-300 font-medium"
             >
               View Cart
             </Link>

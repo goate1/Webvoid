@@ -314,7 +314,7 @@ export default function CartPage() {
               
               <button
                 onClick={handleCheckout}
-                className="w-full bg-[#FFFFFF] hover:bg-[#FFFFFF]/90 text-black font-bold py-3 px-4 rounded-lg transition-all duration-300 glow-on-hover"
+                className="w-full bg-[#0A0A0A] hover:bg-[#222] text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 glow-on-hover"
               >
                 {(() => {
                   const finalTotal = total * 1.08;
