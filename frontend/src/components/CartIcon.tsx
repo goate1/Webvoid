@@ -16,10 +16,10 @@ export default function CartIcon() {
       onMouseEnter={() => setShowPreview(true)}
       onMouseLeave={() => setShowPreview(false)}
     >
-      <Link href="/cart" className="relative p-2 text-white hover:text-[#a6a6a6] transition-colors duration-300">
+      <Link href="/cart" className="relative p-2 text-[#0A0A0A] hover:text-[#A855F7] transition-colors duration-300">
         <ShoppingCartIcon className="h-6 w-6" />
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-[#FFFFFF] text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform translate-x-0 translate-y-2.5">
+          <span className="absolute -top-1 -right-1 bg-[#A855F7] text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center transform translate-x-0 translate-y-2.5">
             {itemCount > 99 ? '99+' : itemCount}
           </span>
         )}
