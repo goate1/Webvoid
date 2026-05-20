@@ -6,6 +6,7 @@ import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "
 import { auth, db } from "@/lib/firebase";
 import AdminDashboard from "@/components/AdminDashboard";
 import { XMarkIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import OrderRecovery from "@/components/admin/OrderRecovery";
 
 // ── Types ─────────────────────────────────────────────────────
 type OrderStatus =
@@ -432,6 +433,7 @@ export default function AdminPanelPage() {
   // ── Stats ────────────────────────────────────────────────────
   const totalRevenue = orders.reduce((s, o) => s + (o.total ?? 0), 0);
   const pending = orders.filter((o) => o.status === "pending").length;
+  const processing = orders.filter((o) => o.status === "processing" || o.status === "accepted").length;
   const delivered = orders.filter((o) => o.status === "delivered").length;
 
   // ── Filtered orders ──────────────────────────────────────────
@@ -559,11 +561,15 @@ export default function AdminPanelPage() {
           </button>
         </div>
 
+        {/* Order recovery — only shows if localStorage has backup orders */}
+        <OrderRecovery />
+
         {/* Stat cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <StatCard label="Total Orders" value={orders.length} />
           <StatCard label="Revenue" value={`$${totalRevenue.toFixed(2)}`} />
           <StatCard label="Pending" value={pending} />
+          <StatCard label="In Progress" value={processing} />
           <StatCard label="Delivered" value={delivered} />
         </div>
 

@@ -35,7 +35,6 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, on
 import { auth, db } from '@/lib/firebase';
 import LoadingScreen from './LoadingScreen';
 import { logService, Log } from '@/lib/logService';
-import OrdersTab from './admin/OrdersTab';
 import ProductsTab from './admin/ProductsTab';
 import TeamsTab from './admin/TeamsTab';
 import AmbassadorsTab from './admin/AmbassadorsTab';
@@ -144,7 +143,7 @@ export default function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
 
-  const [activeTab, setActiveTab] = useState<'products' | 'teams' | 'ambassadors' | 'news' | 'placements' | 'schedule' | 'socials' | 'users' | 'orders' | 'reviews' | 'logs' | 'support'>('orders');
+  const [activeTab, setActiveTab] = useState<'products' | 'teams' | 'ambassadors' | 'news' | 'placements' | 'schedule' | 'socials' | 'users' | 'reviews' | 'logs' | 'support'>('products');
 
   
 
@@ -2509,8 +2508,6 @@ export default function AdminDashboard() {
 
               { id: 'users', label: 'Users', icon: UserPlusIcon },
 
-              { id: 'orders', label: 'Orders', icon: ShoppingBagIcon },
-
               { id: 'reviews', label: 'Reviews', icon: StarIcon },
 
               { id: 'logs', label: 'Logs', icon: DocumentIcon },
@@ -3144,33 +3141,6 @@ export default function AdminDashboard() {
         )}
 
 
-
-        {/* Orders Tab */}
-
-        {activeTab === 'orders' && (
-
-          <OrdersTab
-            orders={orders}
-            updateOrderStatus={updateOrderStatus}
-            deleteOrder={deleteOrder}
-            selectedOrder={selectedOrder}
-            setSelectedOrder={setSelectedOrder}
-            showOrderDetails={showOrderDetails}
-            setShowOrderDetails={setShowOrderDetails}
-            filterStatus={filterStatus}
-            setFilterStatus={setFilterStatus}
-            selectedReviews={selectedReviews}
-            setSelectedReviews={setSelectedReviews}
-            showBulkActions={showBulkActions}
-            setShowBulkActions={setShowBulkActions}
-            onLogAction={logAction}
-            currentUser={currentUser}
-            router={router}
-            formatOrderNumber={formatOrderNumber}
-            getStatusColor={getStatusColor}
-          />
-
-        )}
 
         {/* Logs Tab */}
 
