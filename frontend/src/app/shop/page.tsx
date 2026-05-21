@@ -74,7 +74,7 @@ export default function ShopPage() {
   const handleAddToCart = useCallback((opts: {
     product: Product;
     size?: { name: string; priceModifier?: number };
-    jerseyFields?: { nameOnBack: string; countryFlag: string; color: string };
+    jerseyFields?: { nameOnBack: string; countryFlag: string; color: string; jerseyNumber: string };
   }) => {
     const { product, size, jerseyFields } = opts;
     const numericId = product.id ? stringToHash(product.id) : Date.now();
@@ -100,6 +100,10 @@ export default function ShopPage() {
     if (jerseyFields?.countryFlag) {
       customFields["countryFlag"] = jerseyFields.countryFlag;
       customFieldLabels["countryFlag"] = "Country Flag";
+    }
+    if (jerseyFields?.jerseyNumber) {
+      customFields["jerseyNumber"] = jerseyFields.jerseyNumber;
+      customFieldLabels["jerseyNumber"] = "Jersey Number";
     }
 
     addItem({

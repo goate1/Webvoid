@@ -13,7 +13,7 @@ function isJersey(product: Product): boolean {
 interface AddToCartOpts {
   product: Product;
   size?: { name: string; priceModifier?: number };
-  jerseyFields?: { nameOnBack: string; countryFlag: string; color: string };
+  jerseyFields?: { nameOnBack: string; countryFlag: string; color: string; jerseyNumber: string };
 }
 
 interface Props {
@@ -36,6 +36,7 @@ export default function ProductModal({ product, userCountry, onClose, onAddToCar
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [nameOnBack, setNameOnBack] = useState("");
   const [countryFlag, setCountryFlag] = useState("");
+  const [jerseyNumber, setJerseyNumber] = useState("");
   const [jerseyColor, setJerseyColor] = useState<"Black" | "White">("Black");
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +64,7 @@ export default function ProductModal({ product, userCountry, onClose, onAddToCar
     onAddToCart({
       product,
       size: sizeObj ? { name: sizeObj.name, priceModifier: sizeObj.priceModifier } : undefined,
-      jerseyFields: jersey ? { nameOnBack, countryFlag, color: jerseyColor } : undefined,
+      jerseyFields: jersey ? { nameOnBack, countryFlag, color: jerseyColor, jerseyNumber } : undefined,
     });
     onClose();
   };
@@ -241,6 +242,21 @@ export default function ProductModal({ product, userCountry, onClose, onAddToCar
                     placeholder="e.g. USA, Canada, UK..."
                     value={countryFlag}
                     onChange={(e) => setCountryFlag(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="void-label" htmlFor="modal-jersey-number">
+                    Jersey Number
+                  </label>
+                  <input
+                    id="modal-jersey-number"
+                    type="number"
+                    min={0}
+                    max={99}
+                    className="void-input"
+                    placeholder="e.g. 7"
+                    value={jerseyNumber}
+                    onChange={(e) => setJerseyNumber(e.target.value)}
                   />
                 </div>
               </div>
