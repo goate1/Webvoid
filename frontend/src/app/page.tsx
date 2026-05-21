@@ -232,56 +232,6 @@ export default function Home() {
       {youtubeVideos.length > 0 && (
         <section className="bg-[#F5F5F5] py-20 md:py-24">
           <div className="void-container">
-            {/* Shorts row */}
-            <div className="mb-14">
-              <h2
-                className="font-grotesk font-black uppercase text-[#0A0A0A] leading-none mb-8"
-                style={{ fontSize: "clamp(22px, 3vw, 32px)", letterSpacing: "-0.02em" }}
-              >
-                SHORTS
-              </h2>
-              <div className="flex gap-5 overflow-x-auto pb-2">
-                {[
-                  { videoId: "_29MU1pMKw8", title: "VOID Esports Short" },
-                ].map((short) => (
-                  <button
-                    key={short.videoId}
-                    type="button"
-                    className="void-card group text-left overflow-hidden flex-shrink-0 w-[160px]"
-                    onClick={() =>
-                      window.open(
-                        `https://www.youtube.com/shorts/${short.videoId}`,
-                        "_blank"
-                      )
-                    }
-                  >
-                    <div className="relative overflow-hidden bg-[#E5E5E5]" style={{ aspectRatio: "9/16" }}>
-                      <Image
-                        src={`https://img.youtube.com/vi/${short.videoId}/hqdefault.jpg`}
-                        alt={short.title}
-                        fill
-                        className="object-cover"
-                        sizes="160px"
-                      />
-                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                        <div className="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
-                          <PlayIcon className="w-5 h-5 text-white ml-0.5" />
-                        </div>
-                      </div>
-                      <span className="absolute top-2 left-2 bg-[#FF0000] text-white text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-widest">
-                        Short
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="font-grotesk font-semibold text-[#0A0A0A] text-xs leading-snug line-clamp-2 group-hover:text-[#A855F7] transition-colors">
-                        {short.title}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <h2
               className="font-grotesk font-black uppercase text-[#0A0A0A] leading-none mb-12"
               style={{ fontSize: "clamp(28px, 4vw, 44px)", letterSpacing: "-0.02em" }}
@@ -289,6 +239,35 @@ export default function Home() {
               LATEST VIDEOS
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
+              {/* Pinned short */}
+              <button
+                type="button"
+                className="void-card group text-left overflow-hidden"
+                onClick={() => window.open("https://www.youtube.com/shorts/_29MU1pMKw8", "_blank")}
+              >
+                <div className="relative aspect-video overflow-hidden bg-[#E5E5E5]">
+                  <Image
+                    src="https://img.youtube.com/vi/_29MU1pMKw8/hqdefault.jpg"
+                    alt="VOID Esports Short"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width:640px) 100vw,(max-width:1024px) 50vw,20vw"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                    <div className="w-10 h-10 bg-[#FF0000] rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
+                      <PlayIcon className="w-5 h-5 text-white ml-0.5" />
+                    </div>
+                  </div>
+                  <span className="absolute bottom-2 right-2 bg-[#FF0000] text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-widest">
+                    Short
+                  </span>
+                </div>
+                <div className="p-3">
+                  <p className="font-grotesk font-semibold text-[#0A0A0A] text-sm leading-snug line-clamp-2 group-hover:text-[#A855F7] transition-colors">
+                    VOID Esports Short
+                  </p>
+                </div>
+              </button>
               {youtubeVideos.map((video, i) => (
                 <button
                   key={`${video.id}-${i}`}
