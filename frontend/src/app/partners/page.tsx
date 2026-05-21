@@ -71,15 +71,17 @@ export default function PartnersPage() {
 
               {/* Discount code */}
               <div className="inline-flex items-center gap-3 bg-[#FF6200]/10 border border-[#FF6200]/30 rounded-lg px-5 py-3 mb-8">
-                <span className="text-[#A0A0A0] text-xs uppercase tracking-widest">Discount code</span>
+                <span className="text-[#A0A0A0] text-xs uppercase tracking-widest">Use code</span>
                 <span className="text-[#FF6200] font-black text-lg tracking-widest">VOID</span>
+                <span className="text-[#A0A0A0] text-xs">for</span>
+                <span className="text-white font-black text-sm">10% off</span>
                 <span className="text-[#444] text-xs">at checkout</span>
               </div>
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="https://tweaks.shop/"
+                  href="https://tweaks.shop/?via=void"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-5 py-2.5 bg-[#FF6200] text-black text-sm font-bold rounded-[4px] hover:bg-[#FF7A2A] transition-colors uppercase tracking-wider"
