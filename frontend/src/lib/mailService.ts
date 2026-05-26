@@ -20,7 +20,7 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
+    host: 'smtp.zoho.com',
     port: 465,
     secure: true,
     auth: {
@@ -30,7 +30,7 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
   });
 
   const mailOptions = {
-    from: `"Void Esports" <voidgamingclips2023@gmail.com>`,
+    from: `"Void Esports" <${user}>`,
     to: email,
     subject: `Order Confirmation - ${orderId}`,
     html: `
@@ -46,13 +46,13 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
         
         <p>You can track the status of your order using the link below:</p>
         <div style="text-align: center; margin: 30px 0;">
-          <a href="https://voidesports.org/track-order?order=${orderId}" style="background-color: #740FA8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Track My Order</a>
+          <a href="https://voidesports.net/track-order?order=${orderId}" style="background-color: #740FA8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Track My Order</a>
         </div>
         
         <p>If you have any questions, you can:</p>
         <ul style="line-height: 1.6;">
           <li>Open a support ticket on our <a href="https://discord.gg/X6y2YJbx5f" style="color: #740FA8;">Discord Server</a></li>
-          <li>Contact us directly through our <a href="https://voidesports.org/contact" style="color: #740FA8;">Website</a></li>
+          <li>Contact us directly through our <a href="https://voidesports.net/contact" style="color: #740FA8;">Website</a></li>
         </ul>
         
         <p style="margin-top: 40px; font-size: 0.9em; color: #666; text-align: center;">
