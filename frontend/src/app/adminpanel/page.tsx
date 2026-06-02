@@ -7,6 +7,7 @@ import { auth, db } from "@/lib/firebase";
 import AdminDashboard from "@/components/AdminDashboard";
 import { XMarkIcon, MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import OrderRecovery from "@/components/admin/OrderRecovery";
+import { convertToUSD } from "@/lib/currencyService";
 
 // ── Repulse matcher types ─────────────────────────────────────
 interface RepulseOrder {
@@ -389,10 +390,12 @@ function OrderDrawer({
               Total
             </span>
             <span className="font-grotesk font-black text-[#A855F7] text-xl">
-              ${order.total.toFixed(2)}{" "}
-              <span className="text-sm font-normal text-[#6B6B6B]">
-                {order.currency?.toUpperCase() ?? "USD"}
-              </span>
+              ${convertToUSD(order.total, order.currency ?? "USD").toFixed(2)} USD
+              {order.currency && order.currency.toUpperCase() !== "USD" && (
+                <span className="text-sm font-normal text-[#6B6B6B] ml-1">
+                  ({order.total.toFixed(2)} {order.currency.toUpperCase()})
+                </span>
+              )}
             </span>
           </div>
         </div>
@@ -596,7 +599,7 @@ export default function AdminPanelPage() {
   }, [isAuthenticated, loadOrders]);
 
   // ── Stats ────────────────────────────────────────────────────
-  const totalRevenue = orders.reduce((s, o) => s + (o.total ?? 0), 0);
+  const totalRevenue = orders.reduce((s, o) => s + convertToUSD(o.total ?? 0, o.currency ?? "USD"), 0);
   const pending = orders.filter((o) => o.status === "pending").length;
   const processing = orders.filter((o) => o.status === "processing" || o.status === "accepted").length;
   const delivered = orders.filter((o) => o.status === "delivered").length;
@@ -894,7 +897,12 @@ export default function AdminPanelPage() {
                           {itemSummary || "—"}
                         </td>
                         <td className="px-4 py-3 font-grotesk font-bold text-[#A855F7] whitespace-nowrap">
-                          ${order.total.toFixed(2)}
+                          ${convertToUSD(order.total, order.currency ?? "USD").toFixed(2)}
+                          {order.currency && order.currency.toUpperCase() !== "USD" && (
+                            <span className="text-[10px] font-normal text-[#6B6B6B] ml-1">
+                              ({order.currency.toUpperCase()})
+                            </span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <select

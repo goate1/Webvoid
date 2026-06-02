@@ -248,6 +248,11 @@ export const convertFromUSD = (amount: number, targetCurrency: string): number =
   return amount * rate;
 };
 
+export const convertToUSD = (amount: number, fromCurrency: string): number => {
+  const rate = DEFAULT_RATES[fromCurrency.toUpperCase()] || 1;
+  return amount / rate;
+};
+
 /**
  * Formats a price according to the currency and locale.
  * @param amount Amount in target currency
