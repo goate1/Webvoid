@@ -208,6 +208,11 @@ export default function PaymentSuccessPage() {
           </Link>
         </div>
 
+        {/* Thank you note */}
+        <p className="text-center text-[#6B6B6B] text-sm mt-8">
+          Thank you for your order — we appreciate your support of Void Esports. 🖤
+        </p>
+
       </div>
     </main>
   );
