@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Elements } from '@stripe/react-stripe-js';
 import getStripe from '@/lib/stripe';
@@ -83,6 +84,7 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
   
   const { addOrder } = useOrders();
   const { clearCart } = useCart();
+  const router = useRouter();
 
   const isFormValid = customerInfo.name.trim() !== '' && 
                       customerInfo.email.trim() !== '' && 
@@ -671,8 +673,12 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
                       clearCart();
                       setCompletedOrder(completedOrderData);
                       setOrderProcessed(true);
-                      setShowSuccessModal(true);
+                      // Save order to localStorage so confirmation page can read it
+                      try {
+                        localStorage.setItem('void-last-order', JSON.stringify(completedOrderData));
+                      } catch {}
                       onClose();
+                      router.push(`/payment-success?orderId=${encodeURIComponent(finalOrderId)}`);
                     }}
                     onError={(error: string) => {
                       console.error('Payment error:', error);
