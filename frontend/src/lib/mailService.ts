@@ -15,8 +15,7 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
   const pass = process.env.EMAIL_PASS;
 
   if (!user || !pass) {
-    console.warn('Email credentials not configured, skipping email send');
-    return;
+    throw new Error('EMAIL_USER or EMAIL_PASS not configured in environment variables');
   }
 
   const transporter = nodemailer.createTransport({
