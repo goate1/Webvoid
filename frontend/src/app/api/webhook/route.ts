@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { db } from '@/lib/firebase';
-import { doc, setDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/firebaseAdmin';
 import { sendOrderConfirmationEmail } from '@/lib/mailService';
 import { sendCriticalAlert } from '@/lib/alertService';
 
@@ -32,17 +31,13 @@ const getWebhookSecret = () => {
 };
 
 const verifyOrderInFirebase = async (orderId: string, orderData: any) => {
-  if (!db) {
-    throw new Error('Firebase not available for order verification');
-  }
-  
-  const orderRef = doc(db, 'orders', orderId);
-  const orderSnapshot = await getDoc(orderRef);
-  if (!orderSnapshot.exists()) {
-    // CRITICAL: Order not found - create it instead of failing
+  const adminDb = getAdminDb();
+  const orderRef = adminDb.collection('orders').doc(orderId);
+  const orderSnapshot = await orderRef.get();
+  if (!orderSnapshot.exists) {
     console.log('CRITICAL: Order not found, creating new order:', orderId);
     try {
-      await setDoc(orderRef, {
+      await orderRef.set({
         ...orderData,
         status: 'accepted',
         createdAt: new Date(),
@@ -56,7 +51,7 @@ const verifyOrderInFirebase = async (orderId: string, orderData: any) => {
       throw new Error(`Order creation failed: ${creationError.message}`);
     }
   }
-  
+
   const order = orderSnapshot.data();
   if (!order || order.status !== 'accepted' || order.paymentIntentId !== orderData.paymentIntentId) {
     throw new Error(`Order verification failed: ${orderId}`);
@@ -127,7 +122,8 @@ export async function POST(req: NextRequest) {
         
         while (!orderCreated && retryCount < maxRetries) {
           try {
-            if (db && firestoreOrderId) {
+            if (firestoreOrderId) {
+              const adminDb = getAdminDb();
               const orderData = {
                 status: 'accepted',
                 paymentIntentId: paymentIntent.id,
@@ -138,27 +134,19 @@ export async function POST(req: NextRequest) {
                 verifiedAt: new Date(),
                 stripeMetadata: metadata
               };
-              
-              // CRITICAL: Check if order exists first
-              const orderRef = doc(db, 'orders', firestoreOrderId);
-              const orderSnapshot = await getDoc(orderRef);
-              
-              if (orderSnapshot.exists()) {
-                // Order exists - update it
-                await updateDoc(orderRef, orderData);
+
+              const orderRef = adminDb.collection('orders').doc(firestoreOrderId);
+              const orderSnapshot = await orderRef.get();
+
+              if (orderSnapshot.exists) {
+                await orderRef.update(orderData);
                 console.log('Order updated successfully:', firestoreOrderId);
               } else {
-                // Order doesn't exist - create it
                 const itemsFromMetadata = metadata.items ? JSON.parse(metadata.items) : [];
-                
-                // CRITICAL: Format items to include customization if present in metadata
-                const formattedItems = itemsFromMetadata.map((item: any) => {
-                  // Check if this item has customization stored in metadata (if it was a single item order or if we have room)
-                  return {
-                    ...item,
-                    customization: item.customization || null
-                  };
-                });
+                const formattedItems = itemsFromMetadata.map((item: any) => ({
+                  ...item,
+                  customization: item.customization || null
+                }));
 
                 const completeOrderData = {
                   ...orderData,
@@ -179,17 +167,16 @@ export async function POST(req: NextRequest) {
                   createdBy: 'stripe-webhook',
                   webhookPaymentId: paymentIntent.id
                 };
-                
-                await setDoc(orderRef, completeOrderData);
+
+                await orderRef.set(completeOrderData);
                 console.log('Order created successfully by webhook:', firestoreOrderId);
               }
-              
+
               orderCreated = true;
-              
-              // CRITICAL: Verify order was actually saved
+
               await verifyOrderInFirebase(firestoreOrderId, orderData);
             } else {
-              console.error('CRITICAL: Missing database connection or order ID', { db: !!db, firestoreOrderId });
+              console.error('CRITICAL: Missing order ID in payment metadata', { firestoreOrderId });
               break;
             }
           } catch (error: unknown) {
@@ -241,10 +228,10 @@ export async function POST(req: NextRequest) {
         const failedPaymentIntent = event.data.object as Stripe.PaymentIntent;
         const failedFirestoreId = failedPaymentIntent.metadata.orderId; // Get Firestore order ID from metadata
         
-        // Update order status to failed
-        if (db && failedFirestoreId) {
+        if (failedFirestoreId) {
           try {
-            await updateDoc(doc(db, 'orders', failedFirestoreId), {
+            const adminDb = getAdminDb();
+            await adminDb.collection('orders').doc(failedFirestoreId).update({
               status: 'declined',
               paymentIntentId: failedPaymentIntent.id,
               updatedAt: new Date(),

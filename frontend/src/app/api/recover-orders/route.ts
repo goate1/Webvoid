@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { db } from '@/lib/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { getAdminDb } from '@/lib/firebaseAdmin';
 
 let stripe: Stripe | null = null;
 
@@ -58,12 +57,9 @@ export async function POST(req: NextRequest) {
         }
 
         // Check if order already exists in Firebase
-        if (!db) {
-          throw new Error('Firebase not available');
-        }
-        
-        const orderRef = doc(db, 'orders', firestoreOrderId);
-        const orderSnapshot = await getDoc(orderRef);
+        const adminDb = getAdminDb();
+        const orderRef = adminDb.collection('orders').doc(firestoreOrderId);
+        const orderSnapshot = await orderRef.get();
 
         if (orderSnapshot.exists()) {
           console.log(`Order ${firestoreOrderId} already exists - skipping`);
@@ -107,7 +103,7 @@ export async function POST(req: NextRequest) {
           originalPaymentDate: new Date(paymentIntent.created * 1000)
         };
 
-        await setDoc(orderRef, orderData);
+        await orderRef.set(orderData);
 
         console.log(`RECOVERED ORDER: ${firestoreOrderId} - $${amount} - ${metadata.customerEmail}`);
 
