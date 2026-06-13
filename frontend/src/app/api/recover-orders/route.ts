@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         const orderRef = adminDb.collection('orders').doc(firestoreOrderId);
         const orderSnapshot = await orderRef.get();
 
-        if (orderSnapshot.exists()) {
+        if (orderSnapshot.exists) {
           console.log(`Order ${firestoreOrderId} already exists - skipping`);
           results.skipped++;
           continue;
