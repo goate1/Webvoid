@@ -43,11 +43,6 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
           ${total ? `<p style="margin: 5px 0 0 0;"><strong>Total Paid:</strong> ${total} ${currency || 'USD'}</p>` : ''}
         </div>
         
-        <p>You can track the status of your order using the link below:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="https://voidesports.net/track-order?order=${orderId}" style="background-color: #740FA8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;">Track My Order</a>
-        </div>
-        
         <p>If you have any questions, you can:</p>
         <ul style="line-height: 1.6;">
           <li>Open a support ticket on our <a href="https://discord.gg/X6y2YJbx5f" style="color: #740FA8;">Discord Server</a></li>
