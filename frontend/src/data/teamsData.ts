@@ -106,7 +106,7 @@ export const fallbackTeams: DisplayTeam[] = [
             {
                 name: 'Noxxa',
                 role: 'Founder',
-                image: '/logo.png',
+                image: '/teams/players/noxxapp.jpg',
                 game: 'Management',
                 description: 'Co-Founder of Void Esports.',
                 stats: [
