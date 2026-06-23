@@ -104,6 +104,18 @@ export const fallbackTeams: DisplayTeam[] = [
                 }
             },
             {
+                name: 'Noxxa',
+                role: 'Founder',
+                image: '/logo.png',
+                game: 'Management',
+                description: 'Co-Founder of Void Esports.',
+                stats: [
+                    { label: 'Role', value: 'Founder' }
+                ],
+                achievements: ['Founder', 'Team Management'],
+                socialLinks: {}
+            },
+            {
                 name: 'Trapped',
                 role: 'CFO',
                 image: '/teams/players/trapped.jpg',
@@ -116,25 +128,11 @@ export const fallbackTeams: DisplayTeam[] = [
                 socialLinks: {}
             },
             {
-                name: 'Jah',
-                role: 'Head of Ops',
-                image: '/logo.png',
-                game: 'Management',
-                description: 'Head of Operations. Jah oversees the day-to-day operations and ensures smooth execution across all teams.',
-                stats: [
-                    { label: 'Role', value: 'Head of Ops' }
-                ],
-                achievements: ['Operations', 'Team Coordination', 'Strategy'],
-                socialLinks: {
-                    twitter: 'https://twitter.com/voiddrpuffin'
-                }
-            },
-            {
-                name: 'Audio',
+                name: 'Crispy',
                 role: 'BOD',
                 image: '/logo.png',
                 game: 'Management',
-                description: 'Board of Directors. Audio provides strategic oversight and governance for Void Esports.',
+                description: 'Board of Directors. Crispy provides strategic oversight and governance for Void Esports.',
                 stats: [
                     { label: 'Role', value: 'BOD' }
                 ],
