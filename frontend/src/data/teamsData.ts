@@ -130,7 +130,7 @@ export const fallbackTeams: DisplayTeam[] = [
             {
                 name: 'Crispy',
                 role: 'BOD',
-                image: '/logo.png',
+                image: '/teams/players/crispypp.jpg',
                 game: 'Management',
                 description: 'Board of Directors. Crispy provides strategic oversight and governance for Void Esports.',
                 stats: [
