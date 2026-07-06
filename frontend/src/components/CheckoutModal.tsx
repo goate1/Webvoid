@@ -222,14 +222,37 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
     try {
       setIsLoading(true);
       
-      // Generate order number for metadata
+      // Generate order ID and save order to Firestore before payment
       const orderNumber = generateOrderNumber();
       const tempOrderId = `Void_Order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       setPendingOrderId(tempOrderId);
-      
+
+      // Save pending order server-side (Admin SDK bypasses Firestore rules)
+      await fetch('/api/create-pending-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: tempOrderId,
+          orderData: {
+            id: tempOrderId,
+            items: items.map(item => ({
+              ...item,
+              price: convertFromUSD(item.price, selectedCurrency),
+            })),
+            total: finalTotal,
+            currency: selectedCurrency,
+            shippingCost: convertFromUSD(shippingCostUSD, selectedCurrency),
+            tax,
+            totalUSD: finalTotalUSD,
+            customerInfo,
+          },
+        }),
+      });
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
-      
+
+      // Only pass orderId + customer info to Stripe — no items (avoids 500-char limit)
       const response = await fetch('/api/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -237,6 +260,8 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
           amount: finalTotal,
           currency: selectedCurrency.toLowerCase(),
           metadata: {
+            orderId: tempOrderId,
+            orderNumber,
             customerName: customerInfo.name,
             customerEmail: customerInfo.email,
             customerAddress: customerInfo.address,
@@ -245,21 +270,11 @@ export default function CheckoutModal({ isOpen, onClose, total, items }: Checkou
             customerPhone: customerInfo.phone,
             customerCountry: customerInfo.country,
             customerDiscord: customerInfo.discordUsername,
-            orderId: tempOrderId, // Reference for potential order creation
-            orderNumber,
-            items: JSON.stringify(items.map(item => ({
-              id: item.id,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              customization: item.customization
-              // Note: image excluded to stay under Stripe's 500 char metadata limit
-            }))),
           },
         }),
-        signal: controller.signal
+        signal: controller.signal,
       });
-      
+
       clearTimeout(timeoutId);
 
       if (!response.ok) {

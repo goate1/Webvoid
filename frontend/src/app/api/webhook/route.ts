@@ -140,18 +140,13 @@ export async function POST(req: NextRequest) {
 
               if (orderSnapshot.exists) {
                 await orderRef.update(orderData);
-                console.log('Order updated successfully:', firestoreOrderId);
+                console.log('Order updated to accepted:', firestoreOrderId);
               } else {
-                const itemsFromMetadata = metadata.items ? JSON.parse(metadata.items) : [];
-                const formattedItems = itemsFromMetadata.map((item: any) => ({
-                  ...item,
-                  customization: item.customization || null
-                }));
-
+                // Fallback: order wasn't pre-created (shouldn't happen with new flow)
                 const completeOrderData = {
                   ...orderData,
                   id: firestoreOrderId,
-                  items: formattedItems,
+                  items: [],
                   total: actualAmount,
                   customerInfo: {
                     name: metadata.customerName || '',
@@ -164,12 +159,12 @@ export async function POST(req: NextRequest) {
                     discordUsername: metadata.customerDiscord || ''
                   },
                   createdAt: new Date(),
-                  createdBy: 'stripe-webhook',
+                  createdBy: 'stripe-webhook-fallback',
                   webhookPaymentId: paymentIntent.id
                 };
 
                 await orderRef.set(completeOrderData);
-                console.log('Order created successfully by webhook:', firestoreOrderId);
+                console.log('Order created by webhook fallback:', firestoreOrderId);
               }
 
               orderCreated = true;
