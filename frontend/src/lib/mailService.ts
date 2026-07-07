@@ -38,11 +38,8 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData) => {
         <p>Hi ${customerName || 'Customer'},</p>
         <p>Thank you for your purchase from Void Esports. Your payment has been successfully processed.</p>
         
-        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>Order ID:</strong> <span style="font-family: monospace; font-size: 1.1em;">${orderId}</span></p>
-          ${total ? `<p style="margin: 5px 0 0 0;"><strong>Total Paid:</strong> ${total} ${currency || 'USD'}</p>` : ''}
-        </div>
-        
+        ${total ? `<div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;"><p style="margin: 0;"><strong>Total Paid:</strong> ${total} ${currency || 'USD'}</p></div>` : ''}
+
         <p>If you have any questions, you can:</p>
         <ul style="line-height: 1.6;">
           <li>Open a support ticket on our <a href="https://discord.gg/X6y2YJbx5f" style="color: #740FA8;">Discord Server</a></li>
