@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "firebase/auth";
-import { collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import AdminDashboard from "@/components/AdminDashboard";
 import { XMarkIcon, MagnifyingGlassIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
@@ -537,7 +537,7 @@ export default function AdminPanelPage() {
     setOrdersLoading(true);
     try {
       const col = collection(db, "orders");
-      const q = query(col, orderBy("createdAt", "desc"));
+      const q = query(col, where("status", "!=", "pending"), orderBy("status"), orderBy("createdAt", "desc"));
       const snap = await getDocs(q);
       const rows: AdminOrder[] = snap.docs.map((doc) => {
         const d = doc.data();
