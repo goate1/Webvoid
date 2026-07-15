@@ -182,6 +182,7 @@ interface AdminOrder {
   total: number;
   status: OrderStatus;
   currency?: string;
+  createdBy?: string;
 }
 
 // ── Decode customization from item ID ────────────────────────
@@ -582,11 +583,12 @@ export default function AdminPanelPage() {
           customerInfo: d.customerInfo ?? {},
           items,
           total: d.total ?? 0,
-          status: d.status ?? "pending",
+          status: d.status ?? "accepted",
           currency: d.currency,
+          createdBy: d.createdBy ?? "",
         };
       });
-      setOrders(rows.filter((o) => o.status !== "pending"));
+      setOrders(rows.filter((o) => !(o.status === "pending" && o.createdBy === "checkout")));
     } catch (err) {
       console.error("Error loading orders:", err);
     } finally {
